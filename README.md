@@ -45,3 +45,5 @@ is done only with the fine-tuned person CNN.
 variant of our model, omitting the group-level temporal
 model (LSTM 2). In other words, we do the final classification based on the outputs of the temporal models for
 individual person action labels, but without an additional group-level LSTM
+
+## Results
