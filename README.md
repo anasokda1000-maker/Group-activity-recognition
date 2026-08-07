@@ -4,6 +4,7 @@
 There are two different classification problems the group activity classification and the person action classification. The person action classification depends on the spatial features and the temporal dynamics of the person himself whilst the group activity classification depends on each person in the group and its classification and the relation between the different people in the group and utilizing that information gives the model a greater learning capacity with higher performance. And this is where the idea of hierarchical models came from which was proposed first by "Hierarchical Deep Temporal Models for Group Activity Recognition" (Ibrahim et al., 2016). The hierarchical model classifies the group activity based on each person in the group and the relation between them to end up with a single classification on the group activity. In this project, we implement a hierarchical model on a dataset to tackle the group activity classification problem.
 
 ## Data
+
 ### explaination
 In this project we got a data consisting of volleyball olympic videos each has clips where there are sequential frames in each clip.
 The frame is a photo of the court, the players and some other Classification-irrelevant factors like crowd. each clip has one label for the group activity and each player in each frame has a label for the player action in the frame as shown in **Figure 1**.
@@ -36,28 +37,15 @@ We used 3493 frames for training, and the remaining 1337 frames for testing. The
 | Jumping | 341 |
 | Moving | 5121 |
 | Standing | 38696 |
-
-**Further information:**
-
-- The dataset contains 55 videos. Each video has a folder for it with unique IDs (0, 1...54)
-- **Train Videos:** 1 3 6 7 10 13 15 16 18 22 23 31 32 36 38 39 40 41 42 48 50 52 53 54
-- **Validation Videos:** 0 2 8 12 17 19 24 26 27 28 30 33 46 49 51
-- **Test Videos:** 4 5 9 11 14 20 21 25 29 34 35 37 43 44 45 47
-- Inside each video directory, a set of directories corresponds to annotated frames (e.g. volleyball/39/29885)
-  - Video 39, frame ID 29885
-- Each frame directory has 41 images (20 images before target frame, **target frame**, 20 frames after target frame)
-  - E.g. for frame ID: 29885 => Window = {29865, 29866.....29885, 29886....29905}
-  - Scenes change quite rapidly in volleyball, hence frames beyond that window shouldn't belong to target frame most of the time.
-  - In our work, we used 5 before and 4 after frames.
-- Each video directory has annotations.txt file that contains selected frames annotations.
-- Each annotation line in format: {Frame ID} {Frame Activity Class} {Player Annotation} {Player Annotation} ...
-  - Player Annotation corresponds to a tight bounding box surrounds each player
-- Each {Player Annotation} in format: {Action Class} X Y W H
-- Videos with resolution of 1920x1080 are: 2 37 38 39 40 41 44 45 (8 in total). All others are 1280x720.
  
 
 ## Hierarchical model architecture 
-Our model is supposed to be a group activity recognition model that classify each clip into one of eight group activity classes utilizing both the temporal dynamic of frames in the clip and the person actions in the clip. The model starts with a Resnet50 CNN that was fine-tuned on person actions as a frozen backbone to represent the spatial features for each player in each frame in the clip. Then each player spatial features along the sequential frames in the clip is fed to an LSTM for a temporal dynamic representation. And now each player has a features that represents him both spatially and temporaly. These features are pooled with all other 'players features in the same frame and then the output represents all the frame players temporal and spatial features and their relations. And since every frame has its own features we can feed all frames features in the clip to an LSTM for a single output .The output now is a features that deemd to be representing the temporal dynamic of a group based on individuals in it and their dynamics and the relations between them. Finally we deem these features to be most representing for the group and hence we feed them to a classifier to classify them to one of the eight group activity classes 
+
+### Overview
+Our model is a group activity recognition model that classifies each clip into one of eight group activity classes, utilizing both the temporal dynamics of frames in the clip and the person actions of individual players. 
+
+### Detailed Architecture
+The model starts with a Resnet50 CNN that was fine-tuned on person actions as a frozen backbone to represent the spatial features for each player in each frame in the clip. Then each player spatial features along the sequential frames in the clip is fed to an LSTM for a temporal dynamic representation. And now each player has a features that represents him both spatially and temporaly. These features are pooled with all other 'players features in the same frame and then the output represents all the frame players temporal and spatial features and their relations. And since every frame has its own features we can feed all frames features in the clip to an LSTM for a single output .The output now is a features that deemd to be representing the temporal dynamic of a group based on individuals in it and their dynamics and the relations between them. Finally we deem these features to be most representing for the group and hence we feed them to a classifier to classify them to one of the eight group activity classes 
 
 ## Baselines
 Since the hierarchical model is complicated wtih a lot of extentions each one has its own effect on the performance we start with a simple baseline showing its result and then extending the architecture step by step making another baselines to demonstarte each extention effect and to have a better insight of the perforamnce difference between the proposed model and the baselines as it was proposed in the paper.
