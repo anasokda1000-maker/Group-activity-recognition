@@ -25,6 +25,18 @@ We used 3493 frames for training, and the remaining 1337 frames for testing. The
 | Left spike | 642 |
 | Left set | 633 |
 
+| Action Classes | No. of Instances |
+|---|---|
+| Waiting | 3601 |
+| Setting | 1332 |
+| Digging | 2333 |
+| Falling | 1241 |
+| Spiking | 1216 |
+| Blocking | 2458 |
+| Jumping | 341 |
+| Moving | 5121 |
+| Standing | 38696 |
+
 
  
 
