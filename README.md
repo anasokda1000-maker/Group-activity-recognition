@@ -1,20 +1,30 @@
 # Hierarchical-Deep-Temporal-Models-for-Group-Activity-Recognition-implementation-
 
+## Contents
+
+0. [Motivation](#motivation)
+1. [Data](#data)
+2. [Hierarchical Model Architecture](#hierarchical-model-architecture)
+   - [Overview](#overview)
+   - [Detailed Architecture](#detailed-architecture)
+3. [Baselines](#baselines)
+4. [Results](#results)
+
 ## Motivation
 There are two different classification problems the group activity classification and the person action classification. The person action classification depends on the spatial features and the temporal dynamics of the person himself whilst the group activity classification depends on each person in the group and its classification and the relation between the different people in the group and utilizing that information gives the model a greater learning capacity with higher performance. And this is where the idea of hierarchical models came from which was proposed first by "Hierarchical Deep Temporal Models for Group Activity Recognition" (Ibrahim et al., 2016). The hierarchical model classifies the group activity based on each person in the group and the relation between them to end up with a single classification on the group activity. In this project, we implement a hierarchical model on a dataset to tackle the group activity classification problem.
 
 ## Data
 
-### explaination
+### Description
 In this project we got a data consisting of volleyball olympic videos each has clips where there are sequential frames in each clip.
 The frame is a photo of the court, the players and some other Classification-irrelevant factors like crowd. each clip has one label for the group activity and each player in each frame has a label for the player action in the frame as shown in **Figure 1**.
 <img width="1024" height="576" alt="image" src="https://github.com/user-attachments/assets/6e2c6149-bcc1-43b0-a460-cd53b944822d" />
 <p align="center">Figure 1: A frame with the group activity label "r-pass" and player action labels.</p>
 Notice that the group activity label, the player action labels, and the bounding boxes around the players, which indicate their positions, are already annotated in the dataset. Additionally, the group activity label remains the same across all frames belonging to the same clip, as the group activity is assumed not to change within a single clip.
 
-### distributions
-The total number of videos is 55 with 4830 total number of clips. Each clip has 41 frame from which we used nine frames per clip 
-We used 3493 frames for training, and the remaining 1337 frames for testing. The train-test split of is performed at video level, rather than at frame level so that it makes the evaluation of models more convincing. The list of action and activity labels and related statistics are tabulated in following tables:
+### Distributions
+The total number of videos is 55 with 4830 total number of clips. Each clip has 41 frames from which we used nine frames per clip 
+We used 3493 frames for training, and the remaining 1337 frames for testing. The train-test split is performed at video level, rather than at frame level so that it makes the evaluation of models more convincing. The list of action and activity labels and related statistics are tabulated in following tables:
 | Group Activity Class | No. of Instances |
 |---|---|
 | Right set | 644 |
@@ -45,10 +55,10 @@ We used 3493 frames for training, and the remaining 1337 frames for testing. The
 Our model is a group activity recognition model that classifies each clip into one of eight group activity classes, utilizing both the temporal dynamics of frames in the clip and the person actions of individual players. 
 
 ### Detailed Architecture
-The model starts with a Resnet50 CNN that was fine-tuned on person actions as a frozen backbone to represent the spatial features for each player in each frame in the clip. Then each player spatial features along the sequential frames in the clip is fed to an LSTM for a temporal dynamic representation. And now each player has a features that represents him both spatially and temporaly. These features are pooled with all other 'players features in the same frame and then the output represents all the frame players temporal and spatial features and their relations. And since every frame has its own features we can feed all frames features in the clip to an LSTM for a single output .The output now is a features that deemd to be representing the temporal dynamic of a group based on individuals in it and their dynamics and the relations between them. Finally we deem these features to be most representing for the group and hence we feed them to a classifier to classify them to one of the eight group activity classes 
+The model starts with a ResNet50 CNN that was fine-tuned on person actions as a frozen backbone to represent the spatial features for each player in each frame in the clip. Then each player spatial features along the sequential frames in the clip is fed to an LSTM for a temporal dynamic representation. And now each player has features that represents him both spatially and temporally. These features are pooled with all other players' features in the same frame and then the output represents all the frame players temporal and spatial features and their relations. And since every frame has its own features we can feed all frames features in the clip to an LSTM for a single output. The output now is a features that deemd to be representing the temporal dynamic of a group based on individuals in it and their dynamics and the relations between them. Finally we deem these features to be most representing for the group and hence we feed them to a classifier to classify them to one of the eight group activity classes 
 
 ## Ablation
-Since the hierarchical model is complicated wtih a lot of extentions each one has its own effect on the performance we start with a simple baseline showing its result and then extending the architecture step by step making another baselines to demonstarte each extention effect and to have a better insight of the perforamnce difference between the proposed model and the baselines as it was proposed in the paper.
+Since the hierarchical model is complicated with a lot of extensions each one has its own effect on the performance we start with a simple baseline showing its result and then extending the architecture step by step making another baselines to demonstrate each extension effect and to have a better insight of the performance difference between the proposed model and the baselines as it was proposed in the paper.
 
 ### B3) Fine-tuned Person Classification:
 ResNet50 model on each player is fine-tuned to recognize
