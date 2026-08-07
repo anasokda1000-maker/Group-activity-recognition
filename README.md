@@ -1,4 +1,6 @@
-# Group Activity Recognition
+# Hierarchical Deep Temporal Models for Group Activity Recognition
+
+> **PyTorch Implementation** | Group Activity Recognition in Volleyball Videos using Two-Stage LSTMs
 ## Contents
 
 0. [Motivation](#motivation)
