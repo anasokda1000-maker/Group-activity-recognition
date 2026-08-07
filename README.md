@@ -47,12 +47,8 @@ Our model is a group activity recognition model that classifies each clip into o
 ### Detailed Architecture
 The model starts with a Resnet50 CNN that was fine-tuned on person actions as a frozen backbone to represent the spatial features for each player in each frame in the clip. Then each player spatial features along the sequential frames in the clip is fed to an LSTM for a temporal dynamic representation. And now each player has a features that represents him both spatially and temporaly. These features are pooled with all other 'players features in the same frame and then the output represents all the frame players temporal and spatial features and their relations. And since every frame has its own features we can feed all frames features in the clip to an LSTM for a single output .The output now is a features that deemd to be representing the temporal dynamic of a group based on individuals in it and their dynamics and the relations between them. Finally we deem these features to be most representing for the group and hence we feed them to a classifier to classify them to one of the eight group activity classes 
 
-## Baselines
+## Ablation
 Since the hierarchical model is complicated wtih a lot of extentions each one has its own effect on the performance we start with a simple baseline showing its result and then extending the architecture step by step making another baselines to demonstarte each extention effect and to have a better insight of the perforamnce difference between the proposed model and the baselines as it was proposed in the paper.
-
-### B1) Image Classification: This baseline is the basic resnet50
-model fine-tuned for group activity recognition in a single
-frame.
 
 ### B3) Fine-tuned Person Classification: This baseline is similar to the previous baseline with one distinction. The
 resnet50 model on each player is fine-tuned to recognize
@@ -88,8 +84,6 @@ individual person action labels, but without an additional group-level LSTM
 ## Results
 | Method | Accuracy |
 |---|---|
-| B1-Image Classification | 66.7 |
-| B2-Person Classification | 64.6 |
 | B3-Fine-tuned Person Classification | 68.1 |
 | B4-Temporal Model with Image Features | 63.1 |
 | B5-Temporal Model with Person Features | 67.6 |
