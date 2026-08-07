@@ -1,4 +1,4 @@
-# PyTorch implementation of "Hierarchical Deep Temporal Models for Group Activity Recognition" — classifies group activities in volleyball clips using a two-stage LSTM architecture.
+# PyTorch implementation of "Hierarchical Deep Temporal Models for Group Activity Recognition" on the Volleyball Dataset.
 
 ## Contents
 
