@@ -1,4 +1,4 @@
-# [Hierarchical Deep Temporal Models for Group Activity Recognition](https://arxiv.org/pdf/1607.02643) (Extension)
+# [Hierarchical Deep Temporal Models for Group Activity Recognition](https://arxiv.org/pdf/1607.02643)
 
 > **Authors:** Mostafa S. Ibrahim, Srikanth Muralidharan, Zhiwei Deng, Arash Vahdat, Greg Mori  
 > **Framework:** PyTorch
