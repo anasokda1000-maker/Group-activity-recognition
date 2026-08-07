@@ -86,3 +86,13 @@ model (LSTM 2). In other words, we do the final classification based on the outp
 individual person action labels, but without an additional group-level LSTM
 
 ## Results
+| Method | Accuracy |
+|---|---|
+| B1-Image Classification | 66.7 |
+| B2-Person Classification | 64.6 |
+| B3-Fine-tuned Person Classification | 68.1 |
+| B4-Temporal Model with Image Features | 63.1 |
+| B5-Temporal Model with Person Features | 67.6 |
+| B6-Two-stage Model without LSTM 1 | 74.7 |
+| B7-Two-stage Model without LSTM 2 | 80.2 |
+| **Our Two-stage Hierarchical Model** | **81.9** |
