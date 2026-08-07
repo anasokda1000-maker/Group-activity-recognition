@@ -6,7 +6,8 @@ There are two different classification problems the group activity classificatio
 ## Data
 In this project we got a data consisting of volleyball olympic videos each has clips where there are sequential frames in each clip.
 The frame is a photo of the court, the players and some other Classification-irrelevant factors like crowd. each clip has one label for the group activity and each player in each frame has a label for the player action in the frame as shown below.
-![Uploading image.png…]()
+<img width="945" height="425" alt="image" src="https://github.com/user-attachments/assets/17778721-a3e4-496f-b02d-4efbc1c573ad" />
+
  
 
 ## Hierarchical model architecture 
