@@ -10,7 +10,7 @@
    - [Overview](#overview)
    - [Detailed Architecture](#detailed-architecture)
 3. [Ablation](#Ablation)
-   - [B3](#B3)
+   - [B3](#b3-fine-tuned-person-classification)
    - [B4](#B4 Temporal Model with Image Features:)
    - [B5](#
    - [B6](#
