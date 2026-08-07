@@ -1,5 +1,4 @@
-# PyTorch implementation of "Hierarchical Deep Temporal Models for Group Activity Recognition" on the Volleyball Dataset.
-
+# Group Activity Recognition
 ## Contents
 
 0. [Motivation](#motivation)
