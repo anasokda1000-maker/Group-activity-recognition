@@ -50,8 +50,8 @@ The model starts with a Resnet50 CNN that was fine-tuned on person actions as a 
 ## Ablation
 Since the hierarchical model is complicated wtih a lot of extentions each one has its own effect on the performance we start with a simple baseline showing its result and then extending the architecture step by step making another baselines to demonstarte each extention effect and to have a better insight of the perforamnce difference between the proposed model and the baselines as it was proposed in the paper.
 
-### B3) Fine-tuned Person Classification: This baseline is similar to the previous baseline with one distinction. The
-resnet50 model on each player is fine-tuned to recognize
+### B3) Fine-tuned Person Classification:
+ResNet50 model on each player is fine-tuned to recognize
 person-level actions. Then, fc7 is pooled over all players
 to recognize group activities in a scene without any finetuning of the resnet50 model.
 The rationale behind this baseline is to examine a scenario
@@ -60,24 +60,24 @@ activity annotations are used in a deep learning model that
 does not model the temporal aspect of group activities.
 This is very similar to our two-stage model without the
 temporal modeling.
-### B4) Temporal Model with Image Features: This baseline is
-a temporal extension of the first baseline. It examines the
-idea of feeding image level features directly to a LSTM
+
+### B4) Temporal Model with Image Features:
+It examines the idea of feeding image level features directly to a LSTM
 model to recognize group activities. In this baseline, the
-AlexNet model is deployed on the whole image and
-resulting fc7 features are fed to a LSTM model. This
-baseline can be considered as a reimplementation of
-Donahue et al. [11].
-### B5) Temporal Model with Person Features: This baseline is
-a temporal extension of the second baseline: fc7 features
-pooled over all people are fed to a LSTM model to
+ResNet50 model is deployed on the whole image and
+resulting fc7 features are fed to a LSTM model.
+
+### B5) Temporal Model with Person Features:  
+fc7 features pooled over all people are fed to a LSTM model to
 recognize group activities.
-### B6) Two-stage Model without LSTM 1: This baseline is a
-variant of our model, omitting the person-level temporal
+
+### B6) Two-stage Model without LSTM 1: 
+This baseline is a variant of our model, omitting the person-level temporal
 model (LSTM 1). Instead, the person-level classification
 is done only with the fine-tuned person CNN.
-### B7) Two-stage Model without LSTM 2: This baseline is a
-variant of our model, omitting the group-level temporal
+
+### B7) Two-stage Model without LSTM 2: 
+This baseline is a variant of our model, omitting the group-level temporal
 model (LSTM 2). In other words, we do the final classification based on the outputs of the temporal models for
 individual person action labels, but without an additional group-level LSTM
 
