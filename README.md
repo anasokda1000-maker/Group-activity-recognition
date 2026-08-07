@@ -6,8 +6,9 @@ There are two different classification problems the group activity classificatio
 ## Data
 In this project we got a data consisting of volleyball olympic videos each has clips where there are sequential frames in each clip.
 The frame is a photo of the court, the players and some other Classification-irrelevant factors like crowd. each clip has one label for the group activity and each player in each frame has a label for the player action in the frame as shown in **Figure 1**.
-<img width="945" height="425" alt="image" src="https://github.com/user-attachments/assets/17778721-a3e4-496f-b02d-4efbc1c573ad" />
-<p align="center">Figure 1: Hierarchical model architecture</p>
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/fabce397-063a-4f63-a135-5995de990189" />
+<p align="center">Figure 1: A frame with the group activity label "r-pass" and player action labels.</p>
+Notice that the group activity label, the player action labels, and the bounding boxes around the players, which indicate their positions, are already annotated in the dataset. Additionally, the group activity label remains the same across all frames belonging to the same clip, as the group activity is assumed not to change within a single clip.
  
 
 ## Hierarchical model architecture 
