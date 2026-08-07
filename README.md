@@ -15,15 +15,15 @@ Notice that the group activity label, the player action labels, and the bounding
 The total number of videos is 55 with 4830 total number of clips. Each clip has 41 frame from which we used nine frames per clip 
 We used 3493 frames for training, and the remaining 1337 frames for testing. The train-test split of is performed at video level, rather than at frame level so that it makes the evaluation of models more convincing. The list of action and activity labels and related statistics are tabulated in following tables:
 | Group Activity Class | No. of Instances |
-|-----------------------|-------------------|
-| Right set              | 644               |
-| Right spike            | 623               |
-| Right pass              | 801               |
-| Right winpoint          | 295               |
-| Left winpoint            | 367               |
-| Left pass                | 826               |
-| Left spike                | 642               |
-| Left set                   | 633               |
+|---|---|
+| Right set | 644 |
+| Right spike | 623 |
+| Right pass | 801 |
+| Right winpoint | 295 |
+| Left winpoint | 367 |
+| Left pass | 826 |
+| Left spike | 642 |
+| Left set | 633 |
 
 
  
