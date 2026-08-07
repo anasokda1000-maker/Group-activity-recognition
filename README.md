@@ -11,10 +11,10 @@
    - [Detailed Architecture](#detailed-architecture)
 3. [Ablation](#Ablation)
    - [B3](#B3-fine-tuned-person-classification)
-   - [B4](#B4-Temporal-Model-with-Image-Features:)
-   - [B5](#B5-Temporal-Model-with-Person-Features:) 
-   - [B6](#B6-Two-stage-Model-without-LSTM-1:)
-   - [B7](#B7-Two-stage-Model-without-LSTM-2:) 
+   - [B4](#B4-Temporal-Model-with-Image-Features)
+   - [B5](#B5-Temporal-Model-with-Person-Features) 
+   - [B6](#B6-Two-stage-Model-without-LSTM-1)
+   - [B7](#B7-Two-stage-Model-without-LSTM-2) 
 4. [Results](#results)
 
 ## Motivation
