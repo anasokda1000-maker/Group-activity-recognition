@@ -1,6 +1,7 @@
-# Hierarchical Deep Temporal Models for Group Activity Recognition
+# [Hierarchical Deep Temporal Models for Group Activity Recognition](https://arxiv.org/pdf/1607.02643) (2019)
 
-> **PyTorch Implementation** | Group Activity Recognition in Volleyball Videos using Two-Stage LSTMs
+> **Authors:** Mostafa S. Ibrahim, Srikanth Muralidharan, Zhiwei Deng, Arash Vahdat, Greg Mori  
+> **Framework:** PyTorch
 ## Contents
 
 0. [Motivation](#motivation)
