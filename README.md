@@ -4,10 +4,18 @@
 
 0. [Motivation](#motivation)
 1. [Data](#data)
+   - [Description](#Description)
+   - [Distributions](#Distributions)
 2. [Hierarchical Model Architecture](#hierarchical-model-architecture)
    - [Overview](#overview)
    - [Detailed Architecture](#detailed-architecture)
-3. [Baselines](#baselines)
+3. [Ablation](#Ablation)
+   - [B3](#B3)
+   - [B4](#B4 Temporal Model with Image Features:)
+   - [B5](#
+   - [B6](#
+   - [B6](#
+   - [B7](#
 4. [Results](#results)
 
 ## Motivation
