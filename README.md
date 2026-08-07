@@ -4,11 +4,28 @@
 There are two different classification problems the group activity classification and the person action classification. The person action classification depends on the spatial features and the temporal dynamics of the person himself whilst the group activity classification depends on each person in the group and its classification and the relation between the different people in the group and utilizing that information gives the model a greater learning capacity with higher performance. And this is where the idea of hierarchical models came from which was proposed first by "Hierarchical Deep Temporal Models for Group Activity Recognition" (Ibrahim et al., 2016). The hierarchical model classifies the group activity based on each person in the group and the relation between them to end up with a single classification on the group activity. In this project, we implement a hierarchical model on a dataset to tackle the group activity classification problem.
 
 ## Data
+### explaination
 In this project we got a data consisting of volleyball olympic videos each has clips where there are sequential frames in each clip.
 The frame is a photo of the court, the players and some other Classification-irrelevant factors like crowd. each clip has one label for the group activity and each player in each frame has a label for the player action in the frame as shown in **Figure 1**.
 <img width="1024" height="576" alt="image" src="https://github.com/user-attachments/assets/6e2c6149-bcc1-43b0-a460-cd53b944822d" />
 <p align="center">Figure 1: A frame with the group activity label "r-pass" and player action labels.</p>
 Notice that the group activity label, the player action labels, and the bounding boxes around the players, which indicate their positions, are already annotated in the dataset. Additionally, the group activity label remains the same across all frames belonging to the same clip, as the group activity is assumed not to change within a single clip.
+
+### distributions
+The total number of videos is 55 with 4830 total number of clips. Each clip has 41 frame from which we used nine frames per clip 
+We used 3493 frames for training, and the remaining 1337 frames for testing. The train-test split of is performed at video level, rather than at frame level so that it makes the evaluation of models more convincing. The list of action and activity labels and related statistics are tabulated in following tables:
+| Group Activity Class | No. of Instances |
+|-----------------------|-------------------|
+| Right set              | 644               |
+| Right spike            | 623               |
+| Right pass              | 801               |
+| Right winpoint          | 295               |
+| Left winpoint            | 367               |
+| Left pass                | 826               |
+| Left spike                | 642               |
+| Left set                   | 633               |
+
+
  
 
 ## Hierarchical model architecture 
