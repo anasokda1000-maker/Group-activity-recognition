@@ -22,7 +22,7 @@ There are two different classification problems the group activity classificatio
 ### Description
 In this project we got a data consisting of volleyball olympic videos each has clips where there are sequential frames in each clip.
 The frame is a photo of the court, the players and some other Classification-irrelevant factors like crowd. each clip has one label for the group activity and each player in each frame has a label for the player action in the frame as shown in **Figure 1**.
-<img width="1024" height="576" alt="image" src="https://github.com/user-attachments/assets/6e2c6149-bcc1-43b0-a460-cd53b944822d" />
+<img width="804" height="451" alt="image" src="https://github.com/user-attachments/assets/6a1af50c-90a4-4725-acb6-89f07b9250f3" />
 <p align="center">Figure 1: A frame with the group activity label "r-pass" and player action labels.</p>
 Notice that the group activity label, the player action labels, and the bounding boxes around the players, which indicate their positions, are already annotated in the dataset. Additionally, the group activity label remains the same across all frames belonging to the same clip, as the group activity is assumed not to change within a single clip.
 
