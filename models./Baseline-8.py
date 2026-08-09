@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
-class Baseline_B8(nn.Module):
+class Baseline_8(nn.Module):
     def __init__(self):
         super().__init__()
         resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
