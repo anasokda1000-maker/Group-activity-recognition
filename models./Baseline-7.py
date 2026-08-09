@@ -1,3 +1,7 @@
+import torch
+import torch.nn as nn
+from torchvision.models import resnet50, ResNet50_Weights
+
 class Baseline_B7(nn.Module):
     def __init__(self):
         super().__init__()
