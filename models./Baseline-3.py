@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
-class Baseline_B3_tuned(nn.Module):
+class Baseline_B3(nn.Module):
     def __init__(self):
         super().__init__()
         self.backbone = resnet50(weights=ResNet50_Weights.DEFAULT)
