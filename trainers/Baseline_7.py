@@ -2,8 +2,8 @@ from libraries import *
 from utils import *
 from models.Baseline_7 import Baseline_7
 
-Configs = yaml.safe_load("Configs.yaml")
-Enviroment = yaml.safe_load("Enviroment.yaml")
+Configs = yaml.safe_load(open("Configs.yaml"))
+Environment = yaml.safe_load(open("Environment.yaml"))
 
 def prepare_dataset(videos_root, tracking_root, working_root,
                     train_data = [], val_data = []):
