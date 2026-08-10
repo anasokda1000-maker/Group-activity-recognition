@@ -141,10 +141,11 @@ class dataset(Dataset):
 if __name__ == '__main__':
     
     prepare_dataset(
-        Enviroment['videos_root'],
-        Enviroment['videos_tracking_annot'],
-        Enviroment['working_root'],
-        train_data=Configs['data']['train_ids']
+      Enviroment['videos_root'],
+      Enviroment['videos_tracking_annot'],
+      Enviroment['working_root'],
+      train_data=Configs['data']['train_ids']
+      val_data=Configs['data']['val_ids']
     )
 
     train_dataset = dataset(
