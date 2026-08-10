@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
     val_loader = DataLoader(
       val_dataset, 
-      batch_size=['Baseline-4']['model']['batch_size'], 
+      batch_size=Configs['Baseline-4']['model']['batch_size'], 
       shuffle=False, 
       num_workers=4,
     )
