@@ -1,6 +1,11 @@
 from libraries import *
+from utils import *
+from models.Baseline-7 import Baseline_7
 
-def pre_crop_dataset(videos_root, tracking_root,
+Configs = yaml.safe_load("Configs.yaml")
+Enviroment = yaml.safe_load("Enviroment.yaml")
+
+def prepare_dataset(videos_root, tracking_root, working_root
                     train_data = train_ids, val_data = val_ids):
     train_image_label = {}
     val_image_label = {}
@@ -26,10 +31,9 @@ def pre_crop_dataset(videos_root, tracking_root,
 
             items = list(frame_boxes.items())
             key, value = items[5]  
-            category = clip_category_dct[f'{key}']
-            label = categories_dct[category]
+            label = Configs['data']['categories_dct'][clip_category_dct[f'{key}']]
 
-            clip_output_path = os.path.join('/kaggle/working', video, clip)
+            clip_output_path = os.path.join(working_root, video, clip)
             os.makedirs(clip_output_path, exist_ok = True)
             
             for frame_id, boxes_info in frame_boxes.items():
@@ -52,14 +56,14 @@ def pre_crop_dataset(videos_root, tracking_root,
             if video in train_data : train_image_label[clip_output_path] = (label, players_sorted, right_padding)
             elif video in val_data : val_image_label[clip_output_path] = (label, players_sorted, right_padding)
                     
-    with open('/kaggle/working/train_image_labels.pkl', 'wb') as f:
+    with open(f'{working_root}/train_image_labels.pkl', 'wb') as f:
         pickle.dump(train_image_label, f)
 
-    with open('/kaggle/working/val_image_labels.pkl', 'wb') as f :
+    with open(f'{working_root}/val_image_labels.pkl', 'wb') as f :
         pickle.dump(val_image_label, f)
 
-class B3_dataset_Optimized(Dataset):
-    def __init__(self, data, data_type, processed_root='/kaggle/working'):
+class dataset(Dataset):
+    def __init__(self, data = [], data_type = '', working_root = ''):
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
@@ -73,12 +77,12 @@ class B3_dataset_Optimized(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
-        self.processed_root = processed_root
+        self.working_root = working_root
         self.players_paths = []  
 
         videos = data
         for video in videos:
-            video_path = os.path.join(processed_root, video)
+            video_path = os.path.join(working_root, video)
             
             if os.path.isdir(video_path):
                 clips_ids = os.listdir(video_path)
@@ -89,7 +93,7 @@ class B3_dataset_Optimized(Dataset):
                     self.players_paths.append(clip_id_path)
                         
 
-        with open(f'/kaggle/working/{data_type}_image_labels.pkl', 'rb') as f:
+        with open(f'{self.working_root}/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
@@ -98,7 +102,7 @@ class B3_dataset_Optimized(Dataset):
     def __getitem__(self, idx):
         players_path = self.players_paths[idx]
         frames_ids = sorted(os.listdir(players_path), key=int)
-        label, players_sorted, right_padding = self.image_label["/kaggle/working/" + "/".join(players_path.split("/")[-2:])] # integer
+        label, players_sorted, right_padding = self.image_label[self.working_root + "/".join(players_path.split("/")[-2:])] # integer
         
         clip_images = []
         clip_mask = []
@@ -136,163 +140,181 @@ class B3_dataset_Optimized(Dataset):
 
 if __name__ == '__main__':
   
-  pre_crop_dataset(videos_root, videos_tracking_annot)
-
-  train_dataset = B3_dataset_Optimized(train_ids, 'train')
-      
-  train_loader = DataLoader(
-      train_dataset, 
-      batch_size=8, 
-      shuffle=True,
-      num_workers=4
-  )
-  
-  val_dataset = B3_dataset_Optimized(val_ids, 'val')
-  
-  val_loader = DataLoader(
-      val_dataset, 
-      batch_size=8, 
-      shuffle=False, 
-      num_workers=4,
-  )
-
-  model = Baseline_B3_tuned()
-  name_map = {'conv1': '0', 'bn1': '1', 'layer1': '4', 'layer2': '5', 'layer3': '6', 'layer4': '7'}   
-  remapped_weights = {}
-  for k, v in tuned_weights['model_state_dict'].items():
-      if not k.startswith('backbone.'):
-          continue
-      parts = k.split('.')
-      if parts[1] in name_map:
-          parts[1] = name_map[parts[1]]
-          remapped_weights['.'.join(parts)] = v
-  model.load_state_dict(remapped_weights, strict= False)
-
-  model = nn.DataParallel(model)
-  model.to(device)
-  
-  criterion = nn.CrossEntropyLoss()
-
-  scaler = torch.amp.GradScaler('cuda') 
-  optimizer = optim.AdamW(model.parameters(), lr=.0001, weight_decay=.001)
-  scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-      optimizer, mode='min', factor=0.1, patience=2
-  )
-  
-  graph_train_losses = []
-  graph_val_losses = []
-  for epoch in range(num_epochs):
-
-      model.train()
-      train_loss = 0.0
-      train_correct = 0
-      train_samples = 0
-      train_labels_list = []
-      train_preds_list = []
-      for images, labels, mask in train_loader:
-          images, labels, mask = images.to(device), labels.to(device), mask.to(device)
+    prepare_dataset(
+        Enviroment['videos_root'],
+        Enviroment['videos_tracking_annot'],
+        Enviroment['working_root'],
+        train_data=Configs['data']['train_ids']
+    )
+    
+    train_dataset = dataset(
+        data = Configs['data']['train_ids'],
+        data_type = 'train',
+        working_root = Enviroment['working_root']
+    )
           
-          optimizer.zero_grad()
-          
-          with torch.amp.autocast('cuda'):
-              t_outputs = model(images, mask)
-              t_loss = criterion(t_outputs, labels)
-  
-          scaler.scale(t_loss).backward()
-          scaler.step(optimizer)
-          scaler.update()
-
-          t_num_in_batch = labels.numel()
-          train_loss += t_loss.item() * t_num_in_batch
-          train_samples+= t_num_in_batch
-
-          _, train_preds = torch.max(t_outputs, 1)
-          train_correct += (train_preds == labels).sum().item()
-
-          train_preds_list.append(train_preds.cpu().tolist())
-          train_labels_list.append(labels.cpu().tolist())
-
-      train_preds_list = np.concatenate(train_preds_list)
-      train_labels_list = np.concatenate(train_labels_list)
-
-      final_train_loss = train_loss / train_samples
-      final_train_acc = (train_correct / train_samples) * 100
-
-          
-
-      model.eval() 
-      val_loss = 0.0
-      val_correct = 0
-      val_samples = 0
-      val_preds = []
-      val_labels_list = []
-
-      with torch.no_grad(): 
-          for images, labels, mask in val_loader:
-              images, labels, mask = images.to(device), labels.to(device), mask.to(device)
-              
-              with torch.amp.autocast('cuda'):
-                  v_outputs = model(images, mask)
-                  v_loss = criterion(v_outputs, labels)
-  
-              num_in_batch = labels.numel()
-              val_loss += v_loss.item() * num_in_batch
-              val_samples += num_in_batch
-              
-              _, preds = torch.max(v_outputs, 1)
-              val_correct += (preds == labels).sum().item()
-              
-              val_preds.append(preds.cpu().tolist())
-              val_labels_list.append(labels.cpu().tolist())
-
-      val_preds = np.concatenate(val_preds)
-      val_labels_list = np.concatenate(val_labels_list)
+    train_loader = DataLoader(
+        train_dataset, 
+        batch_size=Configs['Baseline-7']['model']['batch_size'], 
+        shuffle=True,
+        num_workers=4
+    )
       
-      final_val_loss = val_loss / val_samples
-      final_val_acc = (val_correct / val_samples) * 100
-
-      train_cm = confusion_matrix(train_labels_list, train_preds_list)
-      val_cm = confusion_matrix(val_labels_list, val_preds)
-
-      f1_train = f1_score(train_labels_list, train_preds_list, average='weighted')
-      f1_val = f1_score(val_labels_list, val_preds, average='weighted')
-
-
-      print('-------------------------------------------')
-      print(f"\n--- train Results (Epoch {epoch+1}) ---")
-      print(f"train Loss: {final_train_loss:.4f} - train Acc: {final_train_acc:.2f}% - train_f1_weighted: {f1_train:.2f}")
-      print(f"\n--- Validation Results (Epoch {epoch+1}) ---")
-      print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}% - val_f1_weighted: {f1_val:.2f}")
-
-      plt.figure(figsize=(6,5))
-      sns.heatmap(train_cm, annot=True, fmt='d', cmap='coolwarm',
-                  xticklabels=group_classes, yticklabels=group_classes)
-      plt.xlabel('Predicted')
-      plt.ylabel('True')
-      plt.title('Train Confusion Matrix')
-      plt.show()
-
-      plt.figure(figsize=(6,5))
-      sns.heatmap(val_cm, annot=True, fmt='d', cmap='coolwarm',
-                  xticklabels=group_classes, yticklabels=group_classes)
-      plt.xlabel('Predicted')
-      plt.ylabel('True')
-      plt.title('Val Confusion Matrix')
-      plt.show()
-      
-      graph_train_losses.append(final_train_loss)
-      graph_val_losses.append(final_val_loss)
-      epochs = range(1, len(graph_train_losses) + 1)
-      plt.figure(figsize=(8, 5))
-      plt.plot(epochs, graph_train_losses, marker='o', label='Train Loss')
-      plt.plot(epochs, graph_val_losses, marker='o', label='Validation Loss')
-      plt.xlabel('Epoch')
-      plt.ylabel('Loss')
-      plt.title('Loss')
-      plt.legend()
-      plt.grid(True)
-      plt.show()
-      
-      scheduler.step(final_val_loss)
-      torch.cuda.empty_cache()
-      gc.collect()
+    val_dataset = dataset(      
+        data = Configs['data']['val_ids'],
+        data_type = 'val',
+        working_root = Enviroment['working_root']
+    )
+    
+    val_loader = DataLoader(
+        val_dataset, 
+        batch_size=['Baseline-7']['model']['batch_size'], 
+        shuffle=False, 
+        num_workers=4,
+    )
+    
+    device = torch.load(Configs['device'])
+    model = Baseline_7()
+    name_map = {'conv1': '0', 'bn1': '1', 'layer1': '4', 'layer2': '5', 'layer3': '6', 'layer4': '7'}   
+    remapped_weights = {}
+    for k, v in tuned_weights['model_state_dict'].items():
+        if not k.startswith('backbone.'):
+            continue
+        parts = k.split('.')
+        if parts[1] in name_map:
+            parts[1] = name_map[parts[1]]
+            remapped_weights['.'.join(parts)] = v
+    model.load_state_dict(remapped_weights, strict= False)
+    
+    model = nn.DataParallel(model)
+    model.to(device)
+    
+    criterion = nn.CrossEntropyLoss()
+    
+    scaler = torch.amp.GradScaler('cuda') 
+    optimizer = optim.AdamW(
+        model.parameters(),
+        lr = Configs['Baseline-7']['model']['lr'],
+        weight_decay = Configs['Baseline-7']['model']['weight_decay']
+    )	
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.1, patience=2
+    )
+    
+    graph_train_losses = []
+    graph_val_losses = []
+    for epoch in range(Configs['Baseline-7']['num_epochs']):
+    
+        model.train()
+        train_loss = 0.0
+        train_correct = 0
+        train_samples = 0
+        train_labels_list = []
+        train_preds_list = []
+        for images, labels, mask in train_loader:
+            images, labels, mask = images.to(device), labels.to(device), mask.to(device)
+            
+            optimizer.zero_grad()
+            
+            with torch.amp.autocast('cuda'):
+                t_outputs = model(images, mask)
+                t_loss = criterion(t_outputs, labels)
+    
+            scaler.scale(t_loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+    
+            t_num_in_batch = labels.numel()
+            train_loss += t_loss.item() * t_num_in_batch
+            train_samples+= t_num_in_batch
+    
+            _, train_preds = torch.max(t_outputs, 1)
+            train_correct += (train_preds == labels).sum().item()
+    
+            train_preds_list.append(train_preds.cpu().tolist())
+            train_labels_list.append(labels.cpu().tolist())
+    
+        train_preds_list = np.concatenate(train_preds_list)
+        train_labels_list = np.concatenate(train_labels_list)
+    
+        final_train_loss = train_loss / train_samples
+        final_train_acc = (train_correct / train_samples) * 100
+    
+            
+    
+        model.eval() 
+        val_loss = 0.0
+        val_correct = 0
+        val_samples = 0
+        val_preds = []
+        val_labels_list = []
+    
+        with torch.no_grad(): 
+            for images, labels, mask in val_loader:
+                images, labels, mask = images.to(device), labels.to(device), mask.to(device)
+                
+                with torch.amp.autocast('cuda'):
+                    v_outputs = model(images, mask)
+                    v_loss = criterion(v_outputs, labels)
+    
+                num_in_batch = labels.numel()
+                val_loss += v_loss.item() * num_in_batch
+                val_samples += num_in_batch
+                
+                _, preds = torch.max(v_outputs, 1)
+                val_correct += (preds == labels).sum().item()
+                
+                val_preds.append(preds.cpu().tolist())
+                val_labels_list.append(labels.cpu().tolist())
+    
+        val_preds = np.concatenate(val_preds)
+        val_labels_list = np.concatenate(val_labels_list)
+        
+        final_val_loss = val_loss / val_samples
+        final_val_acc = (val_correct / val_samples) * 100
+    
+        train_cm = confusion_matrix(train_labels_list, train_preds_list)
+        val_cm = confusion_matrix(val_labels_list, val_preds)
+    
+        f1_train = f1_score(train_labels_list, train_preds_list, average='weighted')
+        f1_val = f1_score(val_labels_list, val_preds, average='weighted')
+    
+    
+        print('-------------------------------------------')
+        print(f"\n--- train Results (Epoch {epoch+1}) ---")
+        print(f"train Loss: {final_train_loss:.4f} - train Acc: {final_train_acc:.2f}% - train_f1_weighted: {f1_train:.2f}")
+        print(f"\n--- Validation Results (Epoch {epoch+1}) ---")
+        print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}% - val_f1_weighted: {f1_val:.2f}")
+    
+        plt.figure(figsize=(6,5))
+        sns.heatmap(train_cm, annot=True, fmt='d', cmap='coolwarm',
+                    xticklabels=Configs['data']['group_classes'], yticklabels=Configs['data']['group_classes'])
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.title('Train Confusion Matrix')
+        plt.show()
+    
+        plt.figure(figsize=(6,5))
+        sns.heatmap(val_cm, annot=True, fmt='d', cmap='coolwarm',
+                    xticklabels=Configs['data']['group_classes'], yticklabels=Configs['data']['group_classes'])
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.title('Val Confusion Matrix')
+        plt.show()
+        
+        graph_train_losses.append(final_train_loss)
+        graph_val_losses.append(final_val_loss)
+        epochs = range(1, len(graph_train_losses) + 1)
+        plt.figure(figsize=(8, 5))
+        plt.plot(epochs, graph_train_losses, marker='o', label='Train Loss')
+        plt.plot(epochs, graph_val_losses, marker='o', label='Validation Loss')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.title('Loss')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+        
+        scheduler.step(final_val_loss)
+        torch.cuda.empty_cache()
+        gc.collect()
