@@ -1,8 +1,4 @@
 data:
-  videos_root : "/kaggle/input/datasets/sherif31/group-activity-recognition-volleyball/videos"
-  
-  videos_tracking_annot : "/kaggle/input/datasets/sherif31/group-activity-recognition-volleyball/volleyball_tracking_annotation"
-  
   train_ids :
     -"1"
     -"3"
