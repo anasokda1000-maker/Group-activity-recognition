@@ -1,5 +1,7 @@
 from libraries import *
 from utils import *
+from models.baseline_3 import Baseline3
+
 Configs = yaml.safe_load("Configs.yaml")
 Enviroment = yaml.safe_load("Enviroment.yaml")
 
@@ -55,7 +57,7 @@ def prepare_dataset(videos_root, tracking_root, working_root
     with open(f'{working_root}/val_image_labels.pkl', 'wb') as f :
         pickle.dump(val_image_label, f)
 
-class B3_dataset_Optimized(Dataset):
+class dataset(Dataset):
     def __init__(self, data = [], data_type = '', working_root = ''):
         if data_type == 'train' : 
             self.transform = transforms.Compose([
@@ -123,14 +125,14 @@ class B3_dataset_Optimized(Dataset):
 
 if __name__ == '__main__':
     
-    pre_crop_dataset(
+    prepare_dataset(
       Enviroment['videos_root'],
       Enviroment['videos_tracking_annot'],
       Enviroment['working_root'],
       train_data=Configs['data']['train_ids']
     )
 
-    train_dataset = B3_dataset_Optimized(
+    train_dataset = dataset(
       data = Configs['data']['train_ids'],
       data_type = 'train',
       working_root = Enviroment['working_root']
@@ -143,7 +145,7 @@ if __name__ == '__main__':
         num_workers=4
     )
     
-    val_dataset = B3_dataset_Optimized(      
+    val_dataset = dataset(      
       data = Configs['data']['val_ids'],
       data_type = 'val',
       working_root = Enviroment['working_root']
@@ -157,7 +159,7 @@ if __name__ == '__main__':
     )
 
     device = torch.load(Configs['device'])
-    model = Baseline_B3_tuned()
+    model = Baseline_3()
     backbone_weights = {
     k: v for k, v in tuned_weights['model_state_dict'].items() 
     if k.startswith('backbone.') and not k.startswith('backbone.fc.')
