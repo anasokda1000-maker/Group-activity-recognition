@@ -159,7 +159,7 @@ if __name__ == '__main__':
         num_workers=4,
     )
 
-    device = torch.load(Configs['device'])
+    device = torch.device(Configs['device'])
     model = Baseline_3()
     backbone_weights = {
     k: v for k, v in tuned_weights['model_state_dict'].items() 
