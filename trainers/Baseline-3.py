@@ -1,6 +1,9 @@
 from libraries import *
+from utils import *
+Configs = yaml.safe_load("Configs.yaml")
+Enviroment = yaml.safe_load("Enviroment.yaml")
 
-def pre_crop_dataset(videos_root, tracking_root,
+def prepare_dataset(videos_root, tracking_root, working_root
                     train_data = train_ids, val_data = val_ids):
     train_image_label = {}
     val_image_label = {}
@@ -26,13 +29,13 @@ def pre_crop_dataset(videos_root, tracking_root,
             
             items = list(frame_boxes.items())
             key, value = items[5]  
-            label = categories_dct[clip_category_dct[f'{key}']]
+            label = Configs['data']['categories_dct'][clip_category_dct[f'{key}']]
 
             for frame_id, boxes_info in frame_boxes.items():
                 img_path = os.path.join(clip_path, f'{frame_id}.jpg')
                 image = Image.open(img_path).convert('RGB')
 
-                frame_output_path = os.path.join('/kaggle/working', video, clip, f'{frame_id}')
+                frame_output_path = os.path.join(working_root, video, clip, f'{frame_id}')
                 os.makedirs(frame_output_path, exist_ok=True)
     
                 for i, box_info in enumerate(boxes_info):
@@ -46,14 +49,14 @@ def pre_crop_dataset(videos_root, tracking_root,
                 if video in train_data : train_image_label[os.path.join(*frame_output_path.split(os.sep)[-3:])] = label
                 elif video in val_data : val_image_label[os.path.join(*frame_output_path.split(os.sep)[-3:])] = label
                     
-    with open('/kaggle/working/train_image_labels.pkl', 'wb') as f:
+    with open(f'{working_root}/train_image_labels.pkl', 'wb') as f:
         pickle.dump(train_image_label, f)
 
-    with open('/kaggle/working/val_image_labels.pkl', 'wb') as f :
+    with open(f'{working_root}/val_image_labels.pkl', 'wb') as f :
         pickle.dump(val_image_label, f)
 
 class B3_dataset_Optimized(Dataset):
-    def __init__(self, data, data_type, processed_root='/kaggle/working'):
+    def __init__(self, data = [], data_type = '', working_root = ''):
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
@@ -67,12 +70,12 @@ class B3_dataset_Optimized(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
-        self.processed_root = processed_root
+        self.working_root = working_root
         self.players_paths = []  
 
         videos = data
         for video in videos:
-            video_path = os.path.join(processed_root, video)
+            video_path = os.path.join(self.working_root, video)
             
             if os.path.isdir(video_path):
                 clips_ids = os.listdir(video_path)
@@ -90,7 +93,7 @@ class B3_dataset_Optimized(Dataset):
                                 self.players_paths.append(frame_id_path)
                         
 
-        with open(f'/kaggle/working/{data_type}_image_labels.pkl', 'rb') as f:
+        with open(f'{self.working_root}/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
@@ -102,7 +105,7 @@ class B3_dataset_Optimized(Dataset):
 
         frame_images = []
         for save_name in save_names :    
-            image_path = os.path.join(self.processed_root, players_path, save_name)
+            image_path = os.path.join(self.working_root, players_path, save_name)
             image = Image.open(image_path)
             processed_image = self.transform(image) # tensor.size([3, 224, 224])         
 
@@ -120,32 +123,45 @@ class B3_dataset_Optimized(Dataset):
 
 if __name__ == '__main__':
     
-    pre_crop_dataset(videos_root, videos_tracking_annot)
+    pre_crop_dataset(
+      Enviroment['videos_root'],
+      Enviroment['videos_tracking_annot'],
+      Enviroment['working_root'],
+      train_data=Configs['data']['train_ids']
+    )
 
-    train_dataset = B3_dataset_Optimized(train_ids, 'train')
+    train_dataset = B3_dataset_Optimized(
+      data = Configs['data']['train_ids'],
+      data_type = 'train',
+      working_root = Enviroment['working_root']
+    )
         
     train_loader = DataLoader(
         train_dataset, 
-        batch_size=128, 
+        batch_size=Configs['Baseline-3']['model']['batch_size'], 
         shuffle=True,
         num_workers=4
     )
     
-    val_dataset = B3_dataset_Optimized(val_ids, 'val')
+    val_dataset = B3_dataset_Optimized(      
+      data = Configs['data']['val_ids'],
+      data_type = 'val',
+      working_root = Enviroment['working_root']
+    )
     
     val_loader = DataLoader(
         val_dataset, 
-        batch_size=128, 
+        batch_size=['Baseline-3']['model']['batch_size'], 
         shuffle=False, 
         num_workers=4,
     )
 
+    device = torch.load(Configs['device'])
     model = Baseline_B3_tuned()
     backbone_weights = {
     k: v for k, v in tuned_weights['model_state_dict'].items() 
     if k.startswith('backbone.') and not k.startswith('backbone.fc.')
     }
-    model.load_state_dict(backbone_weights, strict= False)
     model.load_state_dict(backbone_weights, strict=False)
 
     model = nn.DataParallel(model)
@@ -154,14 +170,18 @@ if __name__ == '__main__':
     criterion = nn.CrossEntropyLoss()
 
     scaler = torch.amp.GradScaler('cuda') 
-    optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1)
+    optimizer = optim.AdamW(
+      model.parameters(),
+      lr = Configs['Baseline-3']['model']['lr'],
+      weight_decay = Configs['Baseline-3']['model']['weight_decay']
+    )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='min', factor=0.1, patience=5
     )
     
     graph_train_losses = []
     graph_val_losses = []
-    for epoch in range(num_epochs):
+    for epoch in range(Configs['Baseline-3']['num_epochs']):
 
         model.train()
         train_loss = 0.0
@@ -243,7 +263,7 @@ if __name__ == '__main__':
         print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}%")
         plt.figure(figsize=(6,5))
         sns.heatmap(train_cm_percent, annot=True, fmt='.1f', cmap='coolwarm',
-                    xticklabels= group_classes, yticklabels= group_classes)
+                    xticklabels= Configs['data']['group_classes'], yticklabels= Configs['data']['group_classes'])
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.title('Train Confusion Matrix')
@@ -251,7 +271,7 @@ if __name__ == '__main__':
         
         plt.figure(figsize=(6,5))
         sns.heatmap(val_cm_percent, annot=True, fmt=".1f", cmap="coolwarm",
-                    xticklabels= group_classes, yticklabels= group_classes)
+                    xticklabels= Configs['data']['group_classes'], yticklabels= Configs['data']['group_classes'])
         plt.xlabel("Predicted")
         plt.ylabel("True")
         plt.title("Val Confusion Matrix")
