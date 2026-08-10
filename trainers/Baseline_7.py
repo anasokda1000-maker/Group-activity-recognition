@@ -1,6 +1,6 @@
 from libraries import *
 from utils import *
-from models.Baseline-7 import Baseline_7
+from models.Baseline_7 import Baseline_7
 
 Configs = yaml.safe_load("Configs.yaml")
 Enviroment = yaml.safe_load("Enviroment.yaml")
@@ -155,7 +155,7 @@ if __name__ == '__main__':
           
     train_loader = DataLoader(
         train_dataset, 
-        batch_size=Configs['Baseline-7']['model']['batch_size'], 
+        batch_size=Configs['Baseline_7']['model']['batch_size'], 
         shuffle=True,
         num_workers=4
     )
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     
     val_loader = DataLoader(
         val_dataset, 
-        batch_size=['Baseline-7']['model']['batch_size'], 
+        batch_size=['Baseline_7']['model']['batch_size'], 
         shuffle=False, 
         num_workers=4,
     )
@@ -194,8 +194,8 @@ if __name__ == '__main__':
     scaler = torch.amp.GradScaler('cuda') 
     optimizer = optim.AdamW(
         model.parameters(),
-        lr = Configs['Baseline-7']['model']['lr'],
-        weight_decay = Configs['Baseline-7']['model']['weight_decay']
+        lr = Configs['Baseline_7']['model']['lr'],
+        weight_decay = Configs['Baseline_7']['model']['weight_decay']
     )	
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='min', factor=0.1, patience=2
@@ -203,7 +203,7 @@ if __name__ == '__main__':
     
     graph_train_losses = []
     graph_val_losses = []
-    for epoch in range(Configs['Baseline-7']['num_epochs']):
+    for epoch in range(Configs['Baseline_7']['num_epochs']):
     
         model.train()
         train_loss = 0.0
