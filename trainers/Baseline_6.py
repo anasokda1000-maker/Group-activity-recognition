@@ -175,7 +175,7 @@ if __name__ == '__main__':
         num_workers=4,
     )
     
-    device = torch.load(Configs['device'])
+    device = torch.device(Configs['device'])
     model = Baseline_6()
     name_map = {'conv1': '0', 'bn1': '1', 'layer1': '4', 'layer2': '5', 'layer3': '6', 'layer4': '7'}   
     remapped_weights = {}
