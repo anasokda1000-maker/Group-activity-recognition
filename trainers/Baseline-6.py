@@ -102,7 +102,7 @@ class dataset(Dataset):
     def __getitem__(self, idx):
         players_path = self.players_paths[idx]
         frames_ids = sorted(os.listdir(players_path), key=int)
-        label, players_sorted, right_padding = self.image_label[working_root + "/".join(players_path.split("/")[-2:])] # integer
+        label, players_sorted, right_padding = self.image_label[self.working_root + "/".join(players_path.split("/")[-2:])] # integer
         
         clip_images = []
         clip_mask = []
