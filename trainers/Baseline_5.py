@@ -5,7 +5,7 @@ from models.Baseline_5 import Baseline_5
 Configs = yaml.safe_load("Configs.yaml")
 Enviroment = yaml.safe_load("Enviroment.yaml")
 
-def prepare_dataset(videos_root, tracking_root, working_root
+def prepare_dataset(videos_root, tracking_root, working_root,
                     train_data = train_ids, val_data = val_ids):
     train_image_label = {}
     val_image_label = {}
