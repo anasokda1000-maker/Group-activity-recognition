@@ -1,6 +1,6 @@
 from libraries import *
 from utils import *
-from models.baseline_3 import Baseline_3
+from models.Baseline_3 import Baseline_3
 
 Configs = yaml.safe_load("Configs.yaml")
 Enviroment = yaml.safe_load("Enviroment.yaml")
