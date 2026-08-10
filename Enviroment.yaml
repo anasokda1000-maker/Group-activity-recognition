@@ -1,0 +1,5 @@
+videos_root : "/kaggle/input/datasets/sherif31/group-activity-recognition-volleyball/videos"
+  
+videos_tracking_annot : "/kaggle/input/datasets/sherif31/group-activity-recognition-volleyball/volleyball_tracking_annotation"
+
+working_root : "/kaggle/working"
