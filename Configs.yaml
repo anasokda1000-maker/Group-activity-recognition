@@ -94,7 +94,6 @@ Baseline_3 :
     lr : 0.0001
     weight_decay : .001
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline_4 :
   num_epochs : 20
   
@@ -119,7 +118,6 @@ Baseline_6 :
     lr : 0.0001
     weight_decay : .001
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline_7 :
   num_epochs : 20
   
@@ -128,7 +126,6 @@ Baseline_7 :
     lr : 0.0001
     weight_decay : .001
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline_8 :
   num_epochs : 20
   
@@ -137,4 +134,3 @@ Baseline_8 :
     lr : 0.0001
     weight_decay : .001
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
