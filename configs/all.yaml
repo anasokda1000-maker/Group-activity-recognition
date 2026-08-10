@@ -91,6 +91,8 @@ data:
 device : cuda
 
 Baseline-3 :
+  num_epochs : 15
+  
   model :
     batch_size : 8
     lr : 0.0001
@@ -98,20 +100,24 @@ Baseline-3 :
   
   # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline-4 :
+  num_epochs : 20
+  
   model :
     batch_size : 8
     lr : 0.0001
     weight_decay : .001
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline-5 :
+  num_epochs : 20
+  
   model :
     batch_size : 8
     lr : 0.0001
     weight_decay : .001
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline-6 :
+  num_epochs : 20
+  
   model :
     batch_size : 8
     lr : 0.0001
@@ -119,6 +125,8 @@ Baseline-6 :
   
   # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline-7 :
+  num_epochs : 20
+  
   model :
     batch_size : 8
     lr : 0.0001
@@ -126,13 +134,8 @@ Baseline-7 :
   
   # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
 Baseline-8 :
-  model :
-    batch_size : 8
-    lr : 0.0001
-    weight_decay : .001
+  num_epochs : 20
   
-  # tuned_weights : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
-num_epochs : 20
   model :
     batch_size : 8
     lr : 0.0001
