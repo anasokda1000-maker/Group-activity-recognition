@@ -8,20 +8,20 @@ import csv
 import os
 import gc
 import torchvision.transforms as transforms
-import torch.nn.functional as F
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
 import torch.optim as optim
 import torch.nn as nn
 import seaborn as sns
 import numpy as np
-from sklearn.utils.class_weight import compute_class_weight
-from imblearn.under_sampling import RandomUnderSampler
-from torchvision.models import resnet50, ResNet50_Weights
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
-from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.utils.class_weight import compute_class_weight
+from torchvision.models import resnet50, ResNet50_Weights
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.metrics import confusion_matrix
 from pathlib import Path
-from tqdm import tqdm
 from PIL import Image
+from tqdm import tqdm
 
 
 def pre_crop_dataset(videos_root, tracking_root,
@@ -47,37 +47,37 @@ def pre_crop_dataset(videos_root, tracking_root,
             clip_annot = os.path.join(tracking_root, video, clip, f'{clip}.txt')
             
             frame_boxes = load_tracking_annot(clip_annot)
-
+            
             items = list(frame_boxes.items())
             key, value = items[5]  
-            category = clip_category_dct[f'{key}']
-            label = categories_dct[category]
+            label = categories_dct[clip_category_dct[f'{key}']]
 
-            clip_output_path = os.path.join('/kaggle/working', video, clip)
-            os.makedirs(clip_output_path, exist_ok=True)
-            
             for frame_id, boxes_info in frame_boxes.items():
                 img_path = os.path.join(clip_path, f'{frame_id}.jpg')
                 image = Image.open(img_path).convert('RGB')
 
-                resized_image = image.resize((224, 224), Image.BILINEAR)
-                
-                save_name = f"f{frame_id}.jpg"
-                path = os.path.join(clip_output_path, save_name)
-                
-                resized_image.save(path)
-            if video in train_data : train_image_label[clip_output_path] = label
-            elif video in val_data : val_image_label[clip_output_path] = label
+                frame_output_path = os.path.join('/kaggle/working', video, clip, f'{frame_id}')
+                os.makedirs(frame_output_path, exist_ok=True)
+    
+                for i, box_info in enumerate(boxes_info):
+                    cropped_image = image.crop(box_info.box)
+                    resized_image = cropped_image.resize((224, 224), Image.BILINEAR)
+            
+                    save_name = f"f{frame_id}_p{i}.jpg"
+                    path = os.path.join(frame_output_path, save_name)
+                    
+                    resized_image.save(path)
+                if video in train_data : train_image_label[os.path.join(*frame_output_path.split(os.sep)[-3:])] = label
+                elif video in val_data : val_image_label[os.path.join(*frame_output_path.split(os.sep)[-3:])] = label
                     
     with open('/kaggle/working/train_image_labels.pkl', 'wb') as f:
         pickle.dump(train_image_label, f)
 
     with open('/kaggle/working/val_image_labels.pkl', 'wb') as f :
         pickle.dump(val_image_label, f)
-    
 
 class B3_dataset_Optimized(Dataset):
-    def __init__(self, data, data_type, processed_root='/kaggle/input/datasets/anasokda/garvolleyball-resized-frames'):
+    def __init__(self, data, data_type, processed_root='/kaggle/working'):
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
@@ -91,79 +91,98 @@ class B3_dataset_Optimized(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
-        self.clips_paths = []  
+        self.processed_root = processed_root
+        self.players_paths = []  
 
         videos = data
         for video in videos:
             video_path = os.path.join(processed_root, video)
             
             if os.path.isdir(video_path):
-                clips = os.listdir(video_path)
+                clips_ids = os.listdir(video_path)
+                
+                for clip_id in clips_ids:
+                    clip_id_path = os.path.join(video_path, clip_id)
 
-                for clip in clips : 
-                    clip_path = os.path.join(video_path, clip)
-
-                    if os.path.isdir(clip_path):
-                        self.clips_paths.append(clip_path)
+                    if os.path.isdir(clip_id_path):
+                        frames_id = os.listdir(clip_id_path)
+                                              
+                        for frame_id in frames_id :
+                            frame_id_path = os.path.join(clip_id_path, frame_id)
+        
+                            if os.path.isdir(frame_id_path):
+                                self.players_paths.append(frame_id_path)
                         
 
         with open(f'/kaggle/working/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
-        return len(self.clips_paths)
+        return len(self.players_paths)
                 
     def __getitem__(self, idx):
-        clip_path = self.clips_paths[idx]
-        frames = os.listdir(clip_path)
+        players_path = self.players_paths[idx]
+        save_names = os.listdir(players_path)
 
         frame_images = []
-        for frame in frames :    
-            image_path = os.path.join(clip_path, frame)
+        for save_name in save_names :    
+            image_path = os.path.join(self.processed_root, players_path, save_name)
             image = Image.open(image_path)
             processed_image = self.transform(image) # tensor.size([3, 224, 224])         
 
-            frame_images.append(processed_image) # [tensor.size([3, 224, 224]), tensor.size(....), .....] len() --> 9
+            frame_images.append(processed_image) # [tensor.size([3, 224, 224]), tensor.size(....), .....] len() --> 12
         
-        frame_images = torch.stack(frame_images, dim = 0) # tensor.size([9, 3, 224, 224])
+        frame_images = torch.stack(frame_images, dim = 0) # tensor.size([12, 3, 224, 224])
+        
+        players_number = frame_images.size(0)
+        if players_number != 12 :
+            clip_padding = torch.zeros((12 - players_number, 3, 224, 224))
+            frame_images = torch.cat((frame_images, clip_padding), dim=0)
 
-        label = self.image_label["/kaggle/working/" + "/".join(clip_path.split("/")[-2:])] # integer
+        label = self.image_label[os.path.join(*players_path.split(os.sep)[-3:])] # integer
         return frame_images, label
 
 if __name__ == '__main__':
-
-    # pre_crop_dataset(videos_root, videos_tracking_annot)
+    
+    pre_crop_dataset(videos_root, videos_tracking_annot)
 
     train_dataset = B3_dataset_Optimized(train_ids, 'train')
-
+        
     train_loader = DataLoader(
-        train_dataset,
-        batch_size=64,
+        train_dataset, 
+        batch_size=128, 
         shuffle=True,
-        num_workers=4,
+        num_workers=4
     )
-
+    
     val_dataset = B3_dataset_Optimized(val_ids, 'val')
-
+    
     val_loader = DataLoader(
-        val_dataset,
-        batch_size=64,
-        shuffle=False,
+        val_dataset, 
+        batch_size=128, 
+        shuffle=False, 
         num_workers=4,
     )
 
     model = Baseline_B3_tuned()
+    backbone_weights = {
+    k: v for k, v in tuned_weights['model_state_dict'].items() 
+    if k.startswith('backbone.') and not k.startswith('backbone.fc.')
+    }
+    model.load_state_dict(backbone_weights, strict= False)
+    model.load_state_dict(backbone_weights, strict=False)
 
     model = nn.DataParallel(model)
     model.to(device)
-
-    scaler = torch.amp.GradScaler('cuda')
+    
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=.0002 , weight_decay=1)
+
+    scaler = torch.amp.GradScaler('cuda') 
+    optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='min', factor=0.1, patience=5
     )
-
+    
     graph_train_losses = []
     graph_val_losses = []
     for epoch in range(num_epochs):
@@ -237,34 +256,31 @@ if __name__ == '__main__':
         final_val_acc = (val_correct / val_samples) * 100
 
         train_cm = confusion_matrix(train_labels_list, train_preds_list)
+        train_cm_percent = (train_cm/ train_cm.sum(axis=1, keepdims=True) ) * 100
+        
         val_cm = confusion_matrix(val_labels_list, val_preds)
-
-        f1_train = f1_score(train_labels_list, train_preds_list, average='weighted')
-        f1_val = f1_score(val_labels_list, val_preds, average='weighted')
-
-
+        val_cm_percent = (val_cm / val_cm.sum(axis=1, keepdims=True) ) * 100
         print('-------------------------------------------')
         print(f"\n--- train Results (Epoch {epoch+1}) ---")
-        print(f"train Loss: {final_train_loss:.4f} - train Acc: {final_train_acc:.2f}% - train_f1_weighted: {f1_train:.2f}")
+        print(f"train Loss: {final_train_loss:.4f} - train Acc: {final_train_acc:.2f}%")
         print(f"\n--- Validation Results (Epoch {epoch+1}) ---")
-        print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}% - val_f1_weighted: {f1_val:.2f}")
-
+        print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}%")
         plt.figure(figsize=(6,5))
-        sns.heatmap(train_cm, annot=True, fmt='d', cmap='coolwarm',
-                    xticklabels=group_classes, yticklabels=group_classes)
+        sns.heatmap(train_cm_percent, annot=True, fmt='.1f', cmap='coolwarm',
+                    xticklabels= group_classes, yticklabels= group_classes)
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.title('Train Confusion Matrix')
         plt.show()
-
-        plt.figure(figsize=(6,5))
-        sns.heatmap(val_cm, annot=True, fmt='d', cmap='coolwarm',
-                    xticklabels=group_classes, yticklabels=group_classes)
-        plt.xlabel('Predicted')
-        plt.ylabel('True')
-        plt.title('Val Confusion Matrix')
-        plt.show()
         
+        plt.figure(figsize=(6,5))
+        sns.heatmap(val_cm_percent, annot=True, fmt=".1f", cmap="coolwarm",
+                    xticklabels= group_classes, yticklabels= group_classes)
+        plt.xlabel("Predicted")
+        plt.ylabel("True")
+        plt.title("Val Confusion Matrix")
+        plt.show()
+
         graph_train_losses.append(final_train_loss)
         graph_val_losses.append(final_val_loss)
         epochs = range(1, len(graph_train_losses) + 1)
