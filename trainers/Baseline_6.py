@@ -1,6 +1,6 @@
 from libraries import *
 from utils import *
-from models.Baseline-6 import Baseline_6
+from models.Baseline_6 import Baseline_6
 
 Configs = yaml.safe_load("Configs.yaml")
 Enviroment = yaml.safe_load("Enviroment.yaml")
@@ -156,7 +156,7 @@ if __name__ == '__main__':
           
     train_loader = DataLoader(
         train_dataset, 
-        batch_size=Configs['Baseline-6']['model']['batch_size'], 
+        batch_size=Configs['Baseline_6']['model']['batch_size'], 
         shuffle=True,
         num_workers=4
     )
@@ -169,13 +169,13 @@ if __name__ == '__main__':
     
     val_loader = DataLoader(
         val_dataset, 
-        batch_size=['Baseline-6']['model']['batch_size'], 
+        batch_size=['Baseline_6']['model']['batch_size'], 
         shuffle=False, 
         num_workers=4,
     )
     
     device = torch.load(Configs['device'])
-    model = Baseline_3()
+    model = Baseline_6()
     name_map = {'conv1': '0', 'bn1': '1', 'layer1': '4', 'layer2': '5', 'layer3': '6', 'layer4': '7'}   
     remapped_weights = {}
     for k, v in tuned_weights['model_state_dict'].items():
@@ -197,8 +197,8 @@ if __name__ == '__main__':
 
     optimizer = optim.AdamW(
       model.parameters(),
-      lr = Configs['Baseline-6']['model']['lr'],
-      weight_decay = Configs['Baseline-6']['model']['weight_decay']
+      lr = Configs['Baseline_6']['model']['lr'],
+      weight_decay = Configs['Baseline_6']['model']['weight_decay']
     )	
 
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     
     graph_train_losses = []
     graph_val_losses = []
-    for epoch in range(Configs['Baseline-6']['num_epochs']):
+    for epoch in range(Configs['Baseline_6']['num_epochs']):
 
         model.train()
         train_loss = 0.0
