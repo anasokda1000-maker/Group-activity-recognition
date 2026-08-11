@@ -111,9 +111,9 @@ class dataset(Dataset):
 if __name__ == '__main__':
     
 	prepare_dataset(
-        Enviroment['videos_root'],
-        Enviroment['videos_tracking_annot'],
-        Enviroment['working_root'],
+        Environment['videos_root'],
+        Environment['videos_tracking_annot'],
+        Environment['working_root'],
         train_data=Configs['data']['train_ids'],
         val_data=Configs['data']['val_ids']
     )
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 	train_dataset = dataset(
         data = Configs['data']['train_ids'],
         data_type = 'train',
-        working_root = Enviroment['working_root']
+        working_root = Environment['working_root']
     )
 
     train_loader = DataLoader(
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     val_dataset = dataset(      
         data = Configs['data']['val_ids'],
         data_type = 'val',
-        working_root = Enviroment['working_root']
+        working_root = Environment['working_root']
     )
     
     val_loader = DataLoader(
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         optimizer, mode='min', factor=0.1, patience=5
     ) 
 
-    best_weights_path = f'{Enviroment['working_root']}/model/best_weights_pth'
+    best_weights_path = f'{Environment['working_root']}/model/best_weights_pth'
     os.makedirs(best_weights_path, exist_ok = True)
     for epoch in range(Configs['fine_tuning']['num_epochs']):
 
