@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from libraries import *
 from utils import *
 from models.Baseline_7 import Baseline_7
