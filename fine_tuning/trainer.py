@@ -114,7 +114,7 @@ if __name__ == '__main__':
         Enviroment['videos_root'],
         Enviroment['videos_tracking_annot'],
         Enviroment['working_root'],
-        train_data=Configs['data']['train_ids']
+        train_data=Configs['data']['train_ids'],
         val_data=Configs['data']['val_ids']
     )
     
