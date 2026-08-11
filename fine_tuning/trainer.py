@@ -166,8 +166,7 @@ if __name__ == '__main__':
         optimizer, mode='min', factor=0.1, patience=5
     ) 
 
-    best_weights_path = f"{Environment['working_root']}/model/best_weights_pth"
-    os.makedirs(best_weights_path, exist_ok = True)
+    best_weights_path = os.path.join(Environment['working_root'], 'best_weights.pth')
     best_val_acc = 0.0
     for epoch in range(Configs['fine_tuning']['num_epochs']):
 
