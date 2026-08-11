@@ -1,1 +1,44 @@
+--- train Results (Epoch 1) ---
+train Loss: 0.5723 - train Acc: 80.91%
 
+--- Validation Results (Epoch 1) ---
+Val Loss: 0.7044 - Val Acc: 77.15% - f1 weighted: 0.7580
+
+Improved: Val Acc increased from 0.00% to 77.15%
+-------------------------------------------
+--- train Results (Epoch 2) ---
+train Loss: 0.2898 - train Acc: 89.77%
+
+--- Validation Results (Epoch 2) ---
+Val Loss: 0.8445 - Val Acc: 77.31% - f1 weighted: 0.7528
+
+Improved: Val Acc increased from 77.15% to 77.31%
+-------------------------------------------
+--- train Results (Epoch 3) ---
+train Loss: 0.1714 - train Acc: 93.99%
+
+
+--- Validation Results (Epoch 3) ---
+Val Loss: 0.9583 - Val Acc: 75.81% - f1 weighted: 0.7436
+
+No improvement in Val Acc. (Current best: 77.31%)
+-------------------------------------------
+--- train Results (Epoch 4) ---
+train Loss: 0.1306 - train Acc: 95.43%
+
+
+--- Validation Results (Epoch 4) ---
+Val Loss: 0.9730 - Val Acc: 76.30% - f1 weighted: 0.7510
+
+No improvement in Val Acc. (Current best: 77.31%)
+-------------------------------------------
+--- train Results (Epoch 5) ---
+train Loss: 0.1194 - train Acc: 95.82%
+
+--- Validation Results (Epoch 5) ---
+Val Loss: 1.0195 - Val Acc: 73.59% - f1 weighted: 0.7283
+
+No improvement in Val Acc. (Current best: 77.31%)
+-------------------------------------------
+
+Training Finished! Best Validation Accuracy achieved: 77.31%
