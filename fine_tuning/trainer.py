@@ -1,6 +1,6 @@
 from libraries import *
 from utils import *
-from models.Baseline_3 import Baseline_3
+from model import person_classifier
 
 Configs = yaml.safe_load(open("Configs.yaml"))
 Environment = yaml.safe_load(open("Environment.yaml"))
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     )
 
     device = torch.device(Configs['device'])
-	model = Baseline_3()
+	model = person_classifier()
     model = nn.DataParallel(model)
     model.to(device)
 
@@ -165,6 +165,7 @@ if __name__ == '__main__':
 
     best_weights_path = f'{Environment['working_root']}/model/best_weights_pth'
     os.makedirs(best_weights_path, exist_ok = True)
+	best_val_acc = 0.0
     for epoch in range(Configs['fine_tuning']['num_epochs']):
 
         model.train()
