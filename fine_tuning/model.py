@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
-class person_action(nn.Module):
+class person_classifier(nn.Module):
     def __init__(self):
         super().__init__()
         self.backbone = resnet50(weights=ResNet50_Weights.DEFAULT)
