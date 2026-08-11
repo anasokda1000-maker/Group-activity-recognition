@@ -161,14 +161,22 @@ if __name__ == '__main__':
         shuffle=False, 
         num_workers=4,
     )
-
+    
     device = torch.device(Configs['device'])
+    
     model = Baseline_3()
-    backbone_weights = {
-    k: v for k, v in tuned_weights['model_state_dict'].items() 
-    if k.startswith('backbone.') and not k.startswith('backbone.fc.')
-    }
-    model.load_state_dict(backbone_weights, strict=False)
+    tuned_weights = torch.load(Environment['tuned_weights_path'], map_location = device)
+    name_map = {'conv1': '0', 'bn1': '1', 'layer1': '4', 'layer2': '5', 'layer3': '6', 'layer4': '7'}   
+    remapped_weights = {}
+    for k, v in tuned_weights['model_state_dict'].items():
+        if not k.startswith('backbone.'):
+            continue
+        parts = k.split('.')
+        if parts[1] in name_map:
+            parts[1] = name_map[parts[1]]
+            remapped_weights['.'.join(parts)] = v
+    
+    model.load_state_dict(remapped_weights, strict=False)
 
     model = nn.DataParallel(model)
     model.to(device)
