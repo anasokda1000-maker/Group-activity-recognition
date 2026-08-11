@@ -110,7 +110,7 @@ class dataset(Dataset):
 
 if __name__ == '__main__':
     
-	prepare_dataset(
+    prepare_dataset(
         Environment['videos_root'],
         Environment['videos_tracking_annot'],
         Environment['working_root'],
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         val_data=Configs['data']['val_ids']
     )
     
-	train_dataset = dataset(
+    train_dataset = dataset(
         data = Configs['data']['train_ids'],
         data_type = 'train',
         working_root = Environment['working_root']
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     )
 
     device = torch.device(Configs['device'])
-	model = person_classifier()
+    model = person_classifier()
     model = nn.DataParallel(model)
     model.to(device)
 
@@ -154,9 +154,9 @@ if __name__ == '__main__':
     scaler = torch.amp.GradScaler('cuda')  
 
     optimizer = optim.AdamW(
-		model.parameters(),
-		lr = Configs['fine_tuning']['model']['lr'],
-		weight_decay = Configs['fine_tuning']['model']['weight_decay']
+        model.parameters(),
+        lr = Configs['fine_tuning']['model']['lr'],
+        weight_decay = Configs['fine_tuning']['model']['weight_decay']
     )	
     
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -165,7 +165,7 @@ if __name__ == '__main__':
 
     best_weights_path = f'{Environment['working_root']}/model/best_weights_pth'
     os.makedirs(best_weights_path, exist_ok = True)
-	best_val_acc = 0.0
+    best_val_acc = 0.0
     for epoch in range(Configs['fine_tuning']['num_epochs']):
 
         model.train()
@@ -282,4 +282,4 @@ if __name__ == '__main__':
         torch.cuda.empty_cache()
         gc.collect()
         
-	print(f"\nTraining Finished! Best Validation Accuracy achieved: {best_val_acc:.2f}%")
+    print(f"\nTraining Finished! Best Validation Accuracy achieved: {best_val_acc:.2f}%")
