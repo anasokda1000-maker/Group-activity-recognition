@@ -1,6 +1,9 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from libraries import *
 from utils import *
-from model import person_classifier
+from fine_tuning.model import person_classifier
 
 Configs = yaml.safe_load(open("Configs.yaml"))
 Environment = yaml.safe_load(open("Environment.yaml"))
