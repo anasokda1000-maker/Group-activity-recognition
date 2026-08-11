@@ -121,7 +121,7 @@ if __name__ == '__main__':
       Environment['videos_tracking_annot'],
       Environment['working_root'],
       train_data=Configs['data']['train_ids'],
-      val_data=Configs['data']['val_ids']
+      val_data=Configs['data']['test_ids']
     )
 
     train_dataset = dataset(
@@ -138,7 +138,7 @@ if __name__ == '__main__':
       )
 
     val_dataset = dataset(      
-        data = Configs['data']['val_ids'],
+        data = Configs['data']['test_ids'],
         data_type = 'val',
         working_root = Environment['working_root']
     )
