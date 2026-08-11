@@ -154,9 +154,9 @@ if __name__ == '__main__':
     scaler = torch.amp.GradScaler('cuda')  
 
     optimizer = optim.AdamW(
-      model.parameters(),
-      lr = Configs['fine_tuning']['model']['lr'],
-      weight_decay = Configs['fine_tuning']['model']['weight_decay']
+		model.parameters(),
+		lr = Configs['fine_tuning']['model']['lr'],
+		weight_decay = Configs['fine_tuning']['model']['weight_decay']
     )	
     
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -282,4 +282,4 @@ if __name__ == '__main__':
         torch.cuda.empty_cache()
         gc.collect()
         
-print(f"\nTraining Finished! Best Validation Accuracy achieved: {best_val_acc:.2f}%")
+	print(f"\nTraining Finished! Best Validation Accuracy achieved: {best_val_acc:.2f}%")
