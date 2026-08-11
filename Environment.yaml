@@ -3,3 +3,5 @@ videos_root : "/kaggle/input/datasets/sherif31/group-activity-recognition-volley
 videos_tracking_annot : "/kaggle/input/datasets/sherif31/group-activity-recognition-volleyball/volleyball_tracking_annotation"
 
 working_root : "/kaggle/working"
+
+tuned_weights_path : '/kaggle/input/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
