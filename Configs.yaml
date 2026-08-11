@@ -86,6 +86,14 @@ data:
     
 device : cuda
 
+fine_tuning :
+  num_epochs : 5
+
+  model :
+    batch_size : 128
+    lr : 0.0001
+    weight_decay : 1
+
 Baseline_3 :
   num_epochs : 15
   
