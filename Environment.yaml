@@ -4,4 +4,5 @@ videos_tracking_annot : "/kaggle/input/datasets/sherif31/group-activity-recognit
 
 working_root : "/kaggle/working"
 
-tuned_weights_path : '/kaggle/input/gar-volleyball-precropped-first-10-epochs-b3/model/best_weights.pth'
+tuned_weights_path : '/kaggle/input/datasets/anasokda/gar-volleyball-precropped-first-10-epochs-b3'
+
