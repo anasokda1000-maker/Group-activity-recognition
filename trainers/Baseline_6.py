@@ -180,6 +180,7 @@ if __name__ == '__main__':
     
     device = torch.device(Configs['device'])
     model = Baseline_6()
+    tuned_weights = torch.load(Environment['tuned_weights_path'], map_location = device)
     name_map = {'conv1': '0', 'bn1': '1', 'layer1': '4', 'layer2': '5', 'layer3': '6', 'layer4': '7'}   
     remapped_weights = {}
     for k, v in tuned_weights['model_state_dict'].items():
