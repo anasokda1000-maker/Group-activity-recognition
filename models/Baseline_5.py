@@ -11,12 +11,12 @@ class Baseline_5(nn.Module):
 
         self.lstm = nn.LSTM(
         input_size=2048,      
-        hidden_size=1024,     
+        hidden_size=512,     
         num_layers=1,
         batch_first=True
         )
         
-        self.classifier = nn.Sequential(nn.Linear(1024, 8))
+        self.classifier = nn.Sequential(nn.Linear(512, 8))
         
     def forward(self, x, mask):
         B, S, P, C, H, W = x.shape
