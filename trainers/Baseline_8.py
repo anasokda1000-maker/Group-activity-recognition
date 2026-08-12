@@ -292,7 +292,7 @@ if __name__ == '__main__':
 
         plt.figure(figsize=(6,5))
         sns.heatmap(train_cm, annot=True, fmt='d', cmap='coolwarm',
-                    xticklabels=Configs['data']['group_classes'], Configs['data']['group_classes'])
+                    xticklabels=Configs['data']['group_classes'], yticklabels=Configs['data']['group_classes'])
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.title('Train Confusion Matrix')
