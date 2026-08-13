@@ -3,6 +3,11 @@ import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
 class Baseline_5(nn.Module):
+    """
+    backbone : resnet50 
+    batch : clip
+    padded players don't get fed to backbone instead they get get padded tensor with 0 as features 
+    """
     def __init__(self):
         super().__init__()
         resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
@@ -20,6 +25,14 @@ class Baseline_5(nn.Module):
         
     def forward(self, x, mask):
         B, S, P, C, H, W = x.shape
+        """
+        B : batch size
+        S : number of frames in the clip (9)
+        P : number of players in the frame (12)
+        C : number of channels (3)
+        H : height (224)
+        W : width (224)
+        """
         x = x.view(B * S * P, C, H, W)
         mask = mask.view(B* S * P)
 
