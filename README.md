@@ -126,9 +126,12 @@ the LSTM. Since their feature values are typically zero or close to zero,
 I believe they get implicitly ignored during max pooling rather than being
 explicitly masked out.
 
-I also compute a presence ratio (real players / total slots) per team, since
-I noticed it correlates with the likelihood of certain group action labels.
-The final presence ratio is calculated separately for each team.
+I also compute a presence ratio (real players / total slots), since I
+noticed it correlates with the likelihood of certain group action labels.
+In Baselines 5-7, a single presence ratio was calculated for the whole
+frame. In Baseline 8, this was changed to a separate presence ratio per
+team (two values instead of one) and both of which are passed into the last
+classification layer .
 
 ## Results
 | Method | Accuracy |
