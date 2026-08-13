@@ -10,6 +10,30 @@ Environment = yaml.safe_load(open("Environment.yaml"))
 
 def prepare_dataset(videos_root, tracking_root, working_root,
                     train_data = [], val_data = []):
+    """
+    Replaces each frame image with a directory in its place,
+    containing one cropped and resized image per player detected in that frame.
+
+    Saves the cropped resized images on HDD for a faster training
+    Saves the label as dictionary targets where the key is the frame path with frameID and playerID extension
+    One dict for the training and the other for validating and dumps both as pickle files
+
+    Args:
+        videos_root (str): Root directory containing video folders, each
+            with clip subfolders of raw frame images (e.g. `{frame_id}.jpg`).
+        tracking_root (str): Root directory containing tracking annotation
+            files, mirroring the videos_root structure
+            (`{video}/{clip}/{clip}.txt`).
+        working_root (str): Output directory where cropped player images
+            and the resulting label pickle files are saved.
+        train_data (list[str], optional): Video names to assign to the
+            training split. Defaults to [].
+        val_data (list[str], optional): Video names to assign to the
+            validation split. Defaults to [].
+            
+    Returns:
+        None (just saves on HDD)
+    """
     train_image_label = {}
     val_image_label = {}
     
