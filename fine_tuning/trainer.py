@@ -86,6 +86,9 @@ class dataset(Dataset):
         """
         Takes player as batch
         Reads from HDD his image and from pickle his label
+
+        Returns:
+        tuple : (tensor : [3 as channels, 224 as width , 224 as height], integer as player action)
         """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
