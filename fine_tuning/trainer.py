@@ -250,16 +250,16 @@ if __name__ == '__main__':
         print(f"\n--- Validation Results (Epoch {epoch+1}) ---")
         print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}% - f1 weighted: {f1_weighted:.4f}")
 
-        plt.figure(figsize=(6,5))
-        sns.heatmap(train_cm_percent, annot=True, fmt='.1f', cmap='coolwarm',
+        fig1 = plt.figure(figsize=(6,5))
+        ax1 = sns.heatmap(train_cm_percent, annot=True, fmt='.1f', cmap='coolwarm',
                     xticklabels= Configs['data']['player_classes'], yticklabels= Configs['data']['player_classes'])
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.title('Train Confusion Matrix')
         plt.show()
         
-        plt.figure(figsize=(6,5))
-        sns.heatmap(val_cm_percent, annot=True, fmt=".1f", cmap="coolwarm",
+        fig2 = plt.figure(figsize=(6,5))
+        ax2 = sns.heatmap(val_cm_percent, annot=True, fmt=".1f", cmap="coolwarm",
                     xticklabels= Configs['data']['player_classes'], yticklabels= Configs['data']['player_classes'])
         plt.xlabel("Predicted")
         plt.ylabel("True")
