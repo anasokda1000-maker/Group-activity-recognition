@@ -83,6 +83,10 @@ def prepare_dataset(videos_root, tracking_root, working_root,
 
 class dataset(Dataset):
     def __init__(self, data = [], data_type = '', working_root = ''):
+        """
+        Takes player as batch
+        Reads from HDD his image and from pickle his label
+        """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
