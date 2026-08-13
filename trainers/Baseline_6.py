@@ -114,7 +114,7 @@ class dataset(Dataset):
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.working_root = working_root
-        self.players_paths = []  
+        self.clip_paths = []  
 
         videos = data
         for video in videos:
@@ -126,24 +126,24 @@ class dataset(Dataset):
                 for clip_id in clips_ids:
                     clip_id_path = os.path.join(video_path, clip_id)
 
-                    self.players_paths.append(clip_id_path)
+                    self.clip_paths.append(clip_id_path)
                         
 
         with open(f'{working_root}/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
-        return len(self.players_paths)
+        return len(self.clip_paths)
                 
     def __getitem__(self, idx):
-        players_path = self.players_paths[idx]
+        clip_path = self.clip_paths[idx]
         frames_ids = sorted(os.listdir(players_path), key=int)
-        label, players_sorted, right_padding = self.image_label[self.working_root + "/" + "/".join(players_path.split("/")[-2:])] # integer
+        label, players_sorted, right_padding = self.image_label[self.working_root + "/" + "/".join(clip_path.split("/")[-2:])] # integer
         
         clip_images = []
         clip_mask = []
         for frame_id in frames_ids:    
-            frame_id_path = os.path.join(players_path, frame_id)
+            frame_id_path = os.path.join(clip_path, frame_id)
 
             frame_images = []
             for i in players_sorted :
