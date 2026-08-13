@@ -35,7 +35,7 @@ def prepare_dataset(videos_root, tracking_root, working_root,
         None (just saves on HDD)
 
     for this trainer:
-        Each player cropped image path is the key for player action label
+        Each player cropped image path is a key for player action label
     """
     train_image_label = {}
     val_image_label = {}
