@@ -88,7 +88,7 @@ class dataset(Dataset):
         Reads from HDD his image and from pickle his label
 
         Returns:
-        tuple : (tensor of shape([3 as channels, 224 as height, 224 as width], integer as a player label)
+        tuple : (tensor of shape([3 as channels, 224 as height, 224 as width], integer as the player label)
         """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
