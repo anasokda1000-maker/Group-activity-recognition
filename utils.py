@@ -53,6 +53,13 @@ def load_video_annot(video_annot):
         return clip_category_dct
 
 def sorting(image_path, boxes_info):
+  """
+  Reads the image to get its width. Reads boxes_info to get x1 for every
+  playerID, and sorts the playerIDs by ascending x1 (right to left).
+  Decides whether to pad right or left based on the first and last
+  players' distance from the frame boundaries.
+  (Boolean value has no effect if there are no missing players in the frame.)
+  """
   image = Image.open(image_path)
   width, _ = image.size
   lowest_x = float('inf')
