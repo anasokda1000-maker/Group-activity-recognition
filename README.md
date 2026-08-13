@@ -99,6 +99,36 @@ This baseline is a variant of our model, omitting the group-level temporal
 model (LSTM 2). In other words, we do the final classification based on the outputs of the temporal models for
 individual person action labels, but without an additional group-level LSTM
 
+## Deviations from the Paper
+
+In the main hierarchical model, I split the players in the frame into two
+teams, max-pooled each team's player features separately (instead of max-
+pooling over the whole frame), concatenated the two pooled feature vectors,
+and fed them into the second LSTM.
+
+In our data, the players aren't sorted from right to left, so there was no
+direct way to split them into two teams — I had to sort them myself, based
+on the x1 coordinate of their bounding boxes (right to left).
+
+There are also cases of missing players. Missing players always belong to
+the same team, so knowing where to place them requires knowing which team
+they belong to. This only happens when the camera moves right or left,
+cutting off some players from whichever team is closer to the camera
+boundary on that side. To handle this, I detect the player closest to the
+right boundary and the one closest to the left boundary, compare their
+distances to their nearest edge, and pad in the direction of whichever one
+is closer.
+
+Padded players are excluded from the backbone entirely (no image is passed
+through the CNN for them), but their placeholder position is still fed into
+the LSTM. Since their feature values are typically zero or close to zero,
+I believe they get implicitly ignored during max pooling rather than being
+explicitly masked out.
+
+I also compute a presence ratio (real players / total slots) per team, since
+I noticed it correlates with the likelihood of certain group action labels.
+The final presence ratio is calculated separately for each team.
+
 ## Results
 | Method | Accuracy |
 |---|---|
