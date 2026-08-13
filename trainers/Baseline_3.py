@@ -11,12 +11,12 @@ Environment = yaml.safe_load(open("Environment.yaml"))
 def prepare_dataset(videos_root, tracking_root, working_root,
                     train_data = [], val_data = []):
     """
-    Replaces each frame image with a directory in its place,
+    Saves the cropped resized images on HDD for a faster training
+    Replaces each frame image with a frame directory in its place,
     containing one cropped and resized image per player detected in that frame.
 
-    Saves the cropped resized images on HDD for a faster training
-    Saves the group label as dictionary target where the key is the clip path 
-    One dict for the training and the other for validating and dumps both as pickle files
+    Saves the labels as dictionary targets 
+    One dict for the training data and the other for validating data and dumps both as pickle files
 
     Args:
         videos_root (str): Root directory containing video folders, each
@@ -34,8 +34,8 @@ def prepare_dataset(videos_root, tracking_root, working_root,
     Returns:
         None (just saves on HDD)
 
-    data unit:
-        frame (as input), clip label(as ground truth)
+    for this trainer:
+        Each player cropped image path is the key for player action label
     """
     train_image_label = {}
     val_image_label = {}
