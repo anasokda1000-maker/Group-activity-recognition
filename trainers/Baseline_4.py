@@ -66,6 +66,12 @@ def prepare_dataset(videos_root, tracking_root, working_root,
 
 class dataset(Dataset):
     def __init__(self, data = [], data_type = '', working_root = ''):
+        """
+        Takes clip as a batch.
+        
+        Returns:
+        tuple : (tensor of shape([9 as sequence, 3 as channels , 224  as height, 224 as width]), integer as group label)
+        """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
