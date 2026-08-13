@@ -100,6 +100,14 @@ def prepare_dataset(videos_root, tracking_root, working_root,
 
 class dataset(Dataset):
     def __init__(self, data = [], data_type = '', working_root = ''):
+        """
+        Takes clip as a batch. Frames and players are sorted and missing players are padded
+        (the direction of padding was decided in sorting() function)
+
+        Returns:
+          tuple : (tensor.size([9 as frames, 12 as players, 3 as channels, 224 as height, 224 as width]) as input, integer as group label 
+                  ,tensor.size([9 as frames, 12 as players]) as a mask to detected the padded players)
+        """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
