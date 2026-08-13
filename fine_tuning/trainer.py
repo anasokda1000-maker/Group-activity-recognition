@@ -11,7 +11,7 @@ Environment = yaml.safe_load(open("Environment.yaml"))
 def prepare_dataset(videos_root, tracking_root, working_root,
                     train_data = [], val_data = []):
     """
-    Replaces each frame image with a directory in its place,
+    Replaces each frame image with a frame directory in its place,
     containing one cropped and resized image per player detected in that frame.
 
     Saves the cropped resized images on HDD for a faster training
@@ -33,6 +33,9 @@ def prepare_dataset(videos_root, tracking_root, working_root,
             
     Returns:
         None (just saves on HDD)
+
+    data unit:
+        cropped image (as input), player label(as ground truth)
     """
     train_image_label = {}
     val_image_label = {}
