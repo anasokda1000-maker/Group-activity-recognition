@@ -15,8 +15,8 @@ def prepare_dataset(videos_root, tracking_root, working_root,
     Replaces each frame image with a frame directory in its place,
     containing one cropped and resized image per player detected in that frame.
 
-    Saves the label as dictionary targets 
-    One dict for the training and the other for validating and dumps both as pickle files
+    Saves the labels as dictionary targets 
+    One dict for the training data and the other for validating data and dumps both as pickle files
 
     Args:
         videos_root (str): Root directory containing video folders, each
