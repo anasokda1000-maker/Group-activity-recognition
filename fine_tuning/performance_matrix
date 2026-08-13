@@ -42,5 +42,3 @@ No improvement in Val Acc. (Current best: 77.31%)
 -------------------------------------------
 
 Training Finished! Best Validation Accuracy achieved: 77.31%
-
-![Confusion Matrix](https://github.com/user-attachments/assets/ef876b89-7fa6-4fb7-aaef-491d2d4ab501)
