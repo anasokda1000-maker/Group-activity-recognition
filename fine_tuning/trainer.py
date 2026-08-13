@@ -96,7 +96,7 @@ class dataset(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
-        self.players_paths = []  
+        self.player_paths = []  
 
         videos = data
         for video in videos:
@@ -115,22 +115,20 @@ class dataset(Dataset):
                             frame_id_path = os.path.join(clip_id_path, frame_id)
         
                             if os.path.isdir(frame_id_path):
-                                save_names = os.listdir(frame_id_path)
+                                players = os.listdir(frame_id_path)
                                 
-                                for save_name in save_names :
-                                    save_name_path = os.path.join(frame_id_path, save_name)
-                                    self.players_paths.append(save_name_path)
-                
-        pkl_path = f'{working_root}/{data_type}_image_labels.pkl'
+                                for player in players :
+                                    player_path = os.path.join(frame_id_path, player)
+                                    self.player_paths.append(player_path)
         
-        with open(pkl_path, 'rb') as f:
+        with open(f'{working_root}/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
-        return len(self.players_paths)
+        return len(self.player_paths)
                 
     def __getitem__(self, idx):
-        player_path = self.players_paths[idx]
+        player_path = self.player_paths[idx]
                 
         with Image.open(player_path) as image:
             processed_image = self.transform(image) # tensor.size([3, 224, 224])
