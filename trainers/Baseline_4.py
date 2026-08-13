@@ -79,8 +79,9 @@ class dataset(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
-        self.clips_paths = []  
+         
         self.working_root = working_root
+        self.clip_paths = [] 
 
         videos = data
         for video in videos:
@@ -93,17 +94,17 @@ class dataset(Dataset):
                     clip_path = os.path.join(video_path, clip)
 
                     if os.path.isdir(clip_path):
-                        self.clips_paths.append(clip_path)
+                        self.clip_paths.append(clip_path)
                         
 
         with open(f'{working_root}/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
-        return len(self.clips_paths)
+        return len(self.clip_paths)
                 
     def __getitem__(self, idx):
-        clip_path = self.clips_paths[idx]
+        clip_path = self.clip_paths[idx]
         frames = os.listdir(clip_path)
 
         frame_images = []
