@@ -12,7 +12,8 @@
    - [Overview](#overview)
    - [Detailed Architecture](#detailed-architecture)
 3. [Ablation](#Ablation)
-4. [Results](#results)
+4. [Deviations from the Paper](#Deviations-from-the-Paper)
+5. [Results](#results)
 
 ## Motivation
 There are two different classification problems the group activity classification and the person action classification. The person action classification depends on the spatial features and the temporal dynamics of the person himself whilst the group activity classification depends on each person in the group and its classification and the relation between the different people in the group and utilizing that information gives the model a greater learning capacity with higher performance. And this is where the idea of hierarchical models came from which was proposed first by "Hierarchical Deep Temporal Models for Group Activity Recognition" (Ibrahim et al., 2016). The hierarchical model classifies the group activity based on each person in the group and the relation between them to end up with a single classification on the group activity. In this project, we implement a hierarchical model on a dataset to tackle the group activity classification problem.
