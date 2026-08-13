@@ -3,6 +3,10 @@ import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
 class Baseline_3(nn.Module):
+    """
+    backbone is frozen after fine-tuned on person action and now 
+    batch : a single frame
+    """
     def __init__(self):
         super().__init__()
         self.backbone = resnet50(weights=ResNet50_Weights.DEFAULT)
@@ -24,14 +28,22 @@ class Baseline_3(nn.Module):
 
     def forward(self, x):
         B, P, C, H, W = x.shape
+        """
+        B : batch size 
+        P : number of players (12)
+        C : number of channels (3)
+        H : height (224)
+        W : width  (224)
+        """
 
-        x = x.view(B * P, C, H, W)
+        x = x.view(B * P, C, H, W) 
 
-        features = self.backbone(x)
+        features = self.backbone(x) # (B * P, 2048)
 
         features = features.view(B, P, -1)
 
-        pooled_features, _ = torch.max(features, dim=1)
+        pooled_features, _ = torch.max(features, dim=1) # max pooling all players to get a single representation for the frame
+                                                        # (B, 2048)
 
         output = self.classifier(pooled_features)
         
