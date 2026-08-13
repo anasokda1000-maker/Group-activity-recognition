@@ -3,6 +3,13 @@ import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
 class Baseline_8(nn.Module):
+    """
+    backbone frozen and fined-tuned on person action
+    batch : clip
+    padded players aren't fed to backbone instead they get features of 0 and packed in tensors with existed players with same input order
+    presence ratio for each team is fed to last layer as a feature (presence ratio for each team = number of real players / 12)
+    note:(should've diveded on 6 not 12 in presence ratio but doesn't really matter since it is just a ratio) 
+    """
     def __init__(self):
         super().__init__()
         resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
@@ -37,6 +44,14 @@ class Baseline_8(nn.Module):
         
     def forward(self, x, mask):
         B, S, P, C, H, W = x.shape
+        """
+        B : batch size
+        S : number of frames in clip (9)
+        P : number of players in frame (12)
+        C : number of channels (3)
+        H : height (224)
+        W : width (224)
+        """
         x = x.view(B * S * P, C, H, W)
 
         first_frame_mask = mask[:, 0, :]
