@@ -38,9 +38,9 @@ train Loss: 0.1194 - train Acc: 95.82%
 --- Validation Results (Epoch 5) ---
 Val Loss: 1.0195 - Val Acc: 73.59% - f1 weighted: 0.7283
 
-https://github.com/user-attachments/assets/06c6cc6a-1db7-4455-8d2a-09703399b9c4
 No improvement in Val Acc. (Current best: 77.31%)
 -------------------------------------------
 
 Training Finished! Best Validation Accuracy achieved: 77.31%
 
+https://github.com/user-attachments/assets/06c6cc6a-1db7-4455-8d2a-09703399b9c4
