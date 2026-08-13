@@ -89,6 +89,13 @@ def prepare_dataset(videos_root, tracking_root, working_root,
 
 class dataset(Dataset):
     def __init__(self, data = [], data_type = '', working_root = ''):
+        """
+        Takes each frame as batch ,reads every player in the frame and pack them into a tensor
+        or pad the missing players if existed first with a 0 tensors 
+
+        Returns :
+          tensor of shape : [12 as players, 3 as channels , 224  as width, 224 as height] and  integer as label
+        """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
                 transforms.RandomApply([
