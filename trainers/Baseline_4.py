@@ -10,6 +10,11 @@ Environment = yaml.safe_load(open("Environment.yaml"))
 
 def prepare_dataset(videos_root, tracking_root, working_root,
                     train_data = [], val_data = []):
+    """
+    For this trainer:
+        only resize images in its place (no cropping)
+        Each clip path is a key for group activity label
+    """
     train_image_label = {}
     val_image_label = {}
     
