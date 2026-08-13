@@ -94,7 +94,7 @@ class dataset(Dataset):
         or pad the missing players if existed first with a 0 tensors 
 
         Returns :
-          tuple : (tensor of shape([12 as players, 3 as channels , 224  as height, 224 as width]), integer as group label)
+          tuple : (tensor of shape([12 as players, 3 as channels , 224  as height, 224 as width]), integer as the group label)
         """
         if data_type == 'train' : 
             self.transform = transforms.Compose([
