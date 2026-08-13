@@ -3,6 +3,12 @@ import torch.nn as nn
 from torchvision.models import resnet50, ResNet50_Weights
 
 class Baseline_6(nn.Module):
+    """
+    backbone frozen and fined-tuned on person action
+    batch : clip
+    padded players aren't fed to backbone instead they get features of 0 and packed in tensors with existed players with same input order
+    presence ratio is fed to last layer as a feature (presence ratio = number of real players / 12)
+    """
     def __init__(self):
         super().__init__()
         resnet = resnet50(weights=ResNet50_Weights.DEFAULT)
