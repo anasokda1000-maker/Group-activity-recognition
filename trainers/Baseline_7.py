@@ -291,16 +291,16 @@ if __name__ == '__main__':
         print(f"\n--- Validation Results (Epoch {epoch+1}) ---")
         print(f"Val Loss: {final_val_loss:.4f} - Val Acc: {final_val_acc:.2f}% - val_f1_weighted: {f1_val:.2f}")
     
-        plt.figure(figsize=(6,5))
-        sns.heatmap(train_cm, annot=True, fmt='d', cmap='coolwarm',
+        fig1 = plt.figure(figsize=(6,5))
+        ax1 = sns.heatmap(train_cm, annot=True, fmt='d', cmap='coolwarm',
                     xticklabels=Configs['data']['group_classes'], yticklabels=Configs['data']['group_classes'])
         plt.xlabel('Predicted')
         plt.ylabel('True')
         plt.title('Train Confusion Matrix')
         plt.show()
     
-        plt.figure(figsize=(6,5))
-        sns.heatmap(val_cm, annot=True, fmt='d', cmap='coolwarm',
+        fig2 = plt.figure(figsize=(6,5))
+        ax2 = sns.heatmap(val_cm, annot=True, fmt='d', cmap='coolwarm',
                     xticklabels=Configs['data']['group_classes'], yticklabels=Configs['data']['group_classes'])
         plt.xlabel('Predicted')
         plt.ylabel('True')
@@ -310,7 +310,7 @@ if __name__ == '__main__':
         graph_train_losses.append(final_train_loss)
         graph_val_losses.append(final_val_loss)
         epochs = range(1, len(graph_train_losses) + 1)
-        plt.figure(figsize=(8, 5))
+        fig3 = plt.figure(figsize=(8, 5))
         plt.plot(epochs, graph_train_losses, marker='o', label='Train Loss')
         plt.plot(epochs, graph_val_losses, marker='o', label='Validation Loss')
         plt.xlabel('Epoch')
@@ -318,7 +318,7 @@ if __name__ == '__main__':
         plt.title('Loss')
         plt.legend()
         plt.grid(True)
-        plt.show()
+        plt.show();
         
         scheduler.step(final_val_loss)
         torch.cuda.empty_cache()
