@@ -103,7 +103,7 @@ class dataset(Dataset):
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.working_root = working_root
-        self.players_paths = []  
+        self.frame_paths = []  
 
         videos = data
         for video in videos:
@@ -122,22 +122,22 @@ class dataset(Dataset):
                             frame_id_path = os.path.join(clip_id_path, frame_id)
         
                             if os.path.isdir(frame_id_path):
-                                self.players_paths.append(frame_id_path)
+                                self.frame_paths.append(frame_id_path)
                         
 
         with open(f'{self.working_root}/{data_type}_image_labels.pkl', 'rb') as f:
             self.image_label = pickle.load(f)
 
     def __len__(self):
-        return len(self.players_paths)
+        return len(self.frame_paths)
                 
     def __getitem__(self, idx):
-        players_path = self.players_paths[idx]
-        save_names = os.listdir(players_path)
+        frame_path = self.frame_paths[idx]
+        players = os.listdir(frame_path)
 
         frame_images = []
-        for save_name in save_names :    
-            image_path = os.path.join(self.working_root, players_path, save_name)
+        for player in players :    
+            image_path = os.path.join(self.working_root, frame_path, player)
             image = Image.open(image_path)
             processed_image = self.transform(image) # tensor.size([3, 224, 224])         
 
@@ -150,7 +150,7 @@ class dataset(Dataset):
             clip_padding = torch.zeros((12 - players_number, 3, 224, 224))
             frame_images = torch.cat((frame_images, clip_padding), dim=0)
 
-        label = self.image_label[os.path.join(*players_path.split(os.sep)[-3:])] # integer
+        label = self.image_label[os.path.join(*frame_path.split(os.sep)[-3:])] # integer
         return frame_images, label
 
 if __name__ == '__main__':
