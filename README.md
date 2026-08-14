@@ -134,6 +134,7 @@ team (two values instead of one) and both of which are passed into the last
 classification layer .
 
 ## Results
+(all results and plots on this repo was done on test set)
 | Method | Accuracy |
 |---|---|
 | B3-Fine-tuned Person Classification | 79.55% |
