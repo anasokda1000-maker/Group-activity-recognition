@@ -134,7 +134,6 @@ team (two values instead of one) and both of which are passed into the last
 classification layer .
 
 ## Results
-(all results and plots on this repo was done on test set)
 | Method | Accuracy |
 |---|---|
 | B3-Fine-tuned Person Classification | 79.55% |
@@ -143,3 +142,4 @@ classification layer .
 | B6-Two-stage Model without LSTM 1 | 80.18% |
 | B7-Two-stage Model without LSTM 2 | 83.02%  |
 | **Our Two-stage Hierarchical Model** | **90.35%** |
+“All results and plots in this repo were obtained on the test set.”
